@@ -89,13 +89,14 @@
 ---
 
 ## 📂 Project Structure:
-├── frontend/           # ReactJS application
-├── backend/            # Node.js or Python backend
-├── database/           # Database schemas and migrations
-├── infra/              # Terraform/Crossplane configurations
-├── tests/              # Postman test collections
-├── .github/            # GitHub Actions CI configuration
-└── documents/               # Documentation and prototypes
+ 
+ | frontend/ | # ReactJS application |
+ | backend/  | # Node.js or Python backend |
+ | database/ | # Database schemas and migrations |
+ | infra/    | # Terraform/Crossplane configurations |
+ | tests/    | # Postman test collections |
+ | .github/  | # GitHub Actions CI configuration |
+ | documents/| # Documentation and prototypes |
 
 ---
 
