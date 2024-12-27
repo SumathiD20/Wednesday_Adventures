@@ -90,13 +90,13 @@
 
 ## 📂 Project Structure:
  
- | frontend/ | # ReactJS application |
- | backend/  | # Node.js or Python backend |
- | database/ | # Database schemas and migrations |
- | infra/    | # Terraform/Crossplane configurations |
- | tests/    | # Postman test collections |
- | .github/  | # GitHub Actions CI configuration |
- | documents/| # Documentation and prototypes |
+- **frontend/**: Contains the ReactJS codebase for the user interface.  
+- **backend/**: Houses the Node.js backend for APIs and business logic.  
+- **database/**: Includes database schema files and migration scripts.  
+- **infra/**: Configuration files for managing infrastructure using Terraform or Crossplane.  
+- **tests/**: Test collections, including unit, integration, and API tests built with Postman.  
+- **.github/**: CI pipeline configurations using GitHub Actions.  
+- **documents/**: Documentation and prototype designs for the project. 
 
 ---
 
