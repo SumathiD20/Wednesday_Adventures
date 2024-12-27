@@ -89,7 +89,13 @@
 ---
 
 ## 📂 Project Structure:
-├── frontend/ # ReactJS application ├── backend/ # Node.js or Python backend ├── database/ # Database schemas and migrations ├── infra/ # Terraform/Crossplane configurations ├── tests/ # Postman test collections ├── .github/ # GitHub Actions CI configuration └── docs/ # Documentation and prototypes
+├── frontend/           # ReactJS application
+├── backend/            # Node.js or Python backend
+├── database/           # Database schemas and migrations
+├── infra/              # Terraform/Crossplane configurations
+├── tests/              # Postman test collections
+├── .github/            # GitHub Actions CI configuration
+└── documents/               # Documentation and prototypes
 
 ---
 
@@ -127,7 +133,7 @@ Testing is integral to ensure reliability and security:
 ## 🏁 Getting Started
 
 ### Prerequisites
-- Node.js / Python (backend environment).  
+- Node.js  (backend environment).  
 - PostgreSQL / MongoDB (database setup).  
 - Kubernetes cluster for deployment.  
 
