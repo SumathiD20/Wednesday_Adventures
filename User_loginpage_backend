@@ -64,7 +64,7 @@ app.post('/login', (req, res) => {
     });
 });
 
-// Start Server
+// Start Server with port 3000
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
