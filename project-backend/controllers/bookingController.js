@@ -1,4 +1,4 @@
-const Booking = require("../model/Booking");
+const Booking = require("./model/Booking");
 
 //booking list function
 const getBookingList = ({ bookings }) => {
@@ -39,7 +39,7 @@ async function BookTicketController(req, res) {
     }
 
     const totalbooking = await Booking.countDocuments({}, { hint: "_id_" });
-    const bookingnumber = "WWA" + 10000 + totalbooking;
+    const bookingnumber = "WWAP" + 7120 + totalbooking;
     const newBookingData = {
         ...userDetails,
         bookingnumber: bookingnumber,
