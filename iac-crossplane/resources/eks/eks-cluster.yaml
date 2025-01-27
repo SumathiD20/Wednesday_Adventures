@@ -1,0 +1,17 @@
+---
+apiVersion: eks.aws.upbound.io/v1beta1
+kind: Cluster
+metadata:
+  name: wednesday-adventures
+spec:
+  forProvider:
+    region: eu-west-1
+    version: "1.28"
+    roleArnRef:
+      name: eks-cluster-role
+    vpcConfig:
+      - endpointPrivateAccess: false
+        endpointPublicAccess: true
+        subnetIdRefs:
+          - name: private-subnet-1-eks
+          - name: private-subnet-2-eks

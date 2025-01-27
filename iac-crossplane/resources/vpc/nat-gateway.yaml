@@ -1,0 +1,30 @@
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: EIP
+metadata:
+  name: nat-gateway-eip
+  labels:
+    name: nat-gateway-eip
+spec:
+  forProvider:
+    region: eu-west-1
+    vpc: true
+    tags:
+      Name: nat-gateway-eip
+
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: NATGateway
+metadata:
+  name: natgateway-eks
+spec:
+  forProvider:
+    region: eu-west-1
+    connectivityType: public
+    allocationIdRef: 
+      name: nat-gateway-eip
+    subnetIdSelector:
+      matchLabels:
+        name: public-subnet-1-eks
+    tags:
+      Name:  natgateway-eks

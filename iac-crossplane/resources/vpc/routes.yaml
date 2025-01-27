@@ -1,0 +1,98 @@
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTable
+metadata:
+  name: dev-private
+spec:
+  forProvider:
+    region: eu-west-1
+    tags:
+      Name: dev-private
+    vpcIdRef:
+      name: main-vpc-eks
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Route
+metadata:
+  name: dev-private
+spec:
+  forProvider:
+    destinationCidrBlock: 0.0.0.0/0
+    natGatewayIdRef:
+      name: natgateway-eks
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-private
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTable
+metadata:
+  name: dev-public
+spec:
+  forProvider:
+    region: eu-west-1
+    tags:
+      Name: dev-public
+    vpcIdRef:
+      name: main-vpc-eks
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: Route
+metadata:
+  name: dev-public
+spec:
+  forProvider:
+    destinationCidrBlock: 0.0.0.0/0
+    gatewayIdRef:
+      name: main-inter-gateway
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-public
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: dev-private-eu-west-1a
+spec:
+  forProvider:
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-private
+    subnetIdRef:
+      name: private-subnet-1-eks
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: dev-private-eu-west-1b
+spec:
+  forProvider:
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-private
+    subnetIdRef:
+      name: private-subnet-2-eks
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: dev-public-eu-west-1a
+spec:
+  forProvider:
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-public
+    subnetIdRef:
+      name: public-subnet-1-eks
+---
+apiVersion: ec2.aws.upbound.io/v1beta1
+kind: RouteTableAssociation
+metadata:
+  name: dev-public-eu-west-1b
+spec:
+  forProvider:
+    region: eu-west-1
+    routeTableIdRef:
+      name: dev-public
+    subnetIdRef:
+      name: public-subnet-2-eks
