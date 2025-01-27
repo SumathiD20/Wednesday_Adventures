@@ -16,6 +16,9 @@
 1. A clean, intuitive interface for users.
 2. Strong security and data integrity measures.
 3. Seamless CI/CD processes for development and deployment.
+## Architecture
+![wednesday](https://github.com/user-attachments/assets/6176601b-dd4d-40e1-ab57-1f9bcc39e10d)
+
 
 ## 👥Team 
 | Members                   | 
