@@ -177,3 +177,68 @@ router.post('/login', LoginController);
  *             example:
  *               message: Internal Server Error
  */
+router.post('/forgotpassword', ForgotController);
+
+//logout route
+/**
+ * @swagger
+ * /logout:
+ *   post:
+ *     summary: User logout
+ *     description: Logout the user by clearing the authentication token cookie.
+ *     tags: [Authentication]
+ *     responses:
+ *       '200':
+ *         description: Logout successful.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Logout successful
+ *       '500':
+ *         description: Internal Server Error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Internal Server Error
+ */
+router.post('/logout', LogoutController);
+
+
+//authentication route
+/**
+ * @swagger
+ * /authenticate:
+ *   post:
+ *     summary: Authenticate user
+ *     description: Access a secure route by verifying user authentication.
+ *     tags: [Authentication]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       '200':
+ *         description: Secure route accessed successfully.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Secure route accessed successfully!
+ *               email: user@example.com
+ *       '401':
+ *         description: Unauthorized.
+ *         content:
+ *           text/plain:
+ *             example: Unauthorized
+ */
+/**
+ * @swagger
+ * securityDefinitions:
+ *   cookieAuth:
+ *     type: apiKey
+ *     in: cookie
+ *     name: jwtoken
+ */
+router.post('/authenticate', Authenticate, (req, res) => {
+  const email = req.email;
+  res.json({ message: 'Secure route accessed successfully!', email: email });
+});
+
+
