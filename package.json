@@ -1,0 +1,20 @@
+{
+  "name": "wednesday_adventures",
+  "version": "1.0.0",
+  "description": "Repository holding the code and documentations of Wednesday Adventures reservation system.",
+  "main": "backendadmin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumathiD20/Wednesday_Adventures.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SumathiD20/Wednesday_Adventures/issues"
+  },
+  "homepage": "https://github.com/SumathiD20/Wednesday_Adventures#readme"
+}
