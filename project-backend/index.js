@@ -1,10 +1,10 @@
-require('newrelic');
+//require('newrelic');
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
+//const cors = require('cors');
 const swaggerConfig = require('./swagger');
 
 const app = express();
@@ -13,9 +13,9 @@ dotenv.config({ path: './config.env' });
 const PORT = process.env.PORT || 5000;
 
 // MongoDB connection
-require('./db/conn');
+require('./db/connection');
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000'}));
+//app.use(cors({ credentials: true, origin: 'http://localhost:3000'}));
 app.use(cookieParser());
 app.use(bodyParser.json());
 swaggerConfig(app);
