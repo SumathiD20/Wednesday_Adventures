@@ -3,14 +3,13 @@ name: Prevent Direct Push to Main
 on:
   push:
     branches:
-     # - main
       - l00187927-WA-Jira18-CIPipeline  # This will only trigger on pushes to the main branch
 
 #jobs:
  # prevent-direct-push:
  #   runs-on: ubuntu-latest
 
-  #  steps:
+   # steps:
     #  - name: Fail on direct push to main
     #    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && contains(github.event.head_commit.message, 'Merge pull request') == false
         # Checks if the push is directly to main branch without pull request
