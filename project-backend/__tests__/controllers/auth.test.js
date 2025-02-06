@@ -96,5 +96,13 @@ describe('Forgot Password Routes', () => {
 
 });
 
+describe('Logout Routes', () => {
 
+    it("Should return status 500 if User was not logged in", async () => {
+        const jwtoken = "Not a valid Token";
+        result = await LogoutController(request, response);
+        expect(response.status).toHaveBeenCalledWith(500);
+    });
+
+});
 

@@ -39,7 +39,7 @@ async function BookTicketController(req, res) {
     }
 
     const totalbooking = await Booking.countDocuments({}, { hint: "_id_" });
-    const bookingnumber = "WWA" + 10000 + totalbooking;
+    const bookingnumber = "WWA" + 7210 + totalbooking;
     const newBookingData = {
         ...userDetails,
         bookingnumber: bookingnumber,

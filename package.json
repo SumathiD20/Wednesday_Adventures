@@ -1,6 +1,31 @@
 {
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
-    "jsonwebtoken": "^9.0.2"
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.10.0",
+    "wednesday_adventures": "file:"
+  },
+  "name": "wednesday_adventures",
+  "version": "1.0.0",
+  "description": "Repository holding the code and documentations of Wednesday Adventures reservation system.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumathiD20/Wednesday_Adventures.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SumathiD20/Wednesday_Adventures/issues"
+  },
+  "homepage": "https://github.com/SumathiD20/Wednesday_Adventures#readme",
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
