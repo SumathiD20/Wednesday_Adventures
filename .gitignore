@@ -22,3 +22,5 @@ rad.json
 TestResults.xml
 #nodemodules
 Project-backend/node_modules
+Documentation/~$g documentation.docx
+node_modules/
