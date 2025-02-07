@@ -1,4 +1,11 @@
-const { SignupController, LoginController, ForgotController, LogoutController } = require("../../controllers/authController");
+module.exports = {
+    testEnvironment: 'node',
+    collectCoverage: true, // Enable coverage collection
+    coverageReporters: ["lcov", "text"], // Specify coverage reporters
+    // Optional: Specify the directory where Jest should output its coverage files
+    coverageDirectory: "coverage",
+};
+const { AdminSignupController, AdminLoginController, AdminForgotController, AdminLogoutController } = require("../../controllers/adminAuthController");
 const User = require("../../model/User");
 let request, response;
 jest.mock("../../model/User");
@@ -13,7 +20,7 @@ beforeEach(() => {
         }
     };
     response = {
-        status: jest.fn().mockReturnThis(), // Corrected for method chaining
+        status: jest.fn().mockReturnThis(), // Adjusted for method chaining
         json: jest.fn()
     };
 });
@@ -22,31 +29,31 @@ beforeEach(() => {
 
 describe('Signup Rountes', () => {
 
-    it("Should return status 422 if User Details are Incomplete", async () => {
+    it("Should return status 422 if Admin Details are Incomplete", async () => {
         request.body.email = undefined;
-        result = await SignupController(request, response);
+        result = await AdminSignupController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
     it("Should return status 422 if Passwords is short than 6 character", async () => {
         request.body.password = "short";
-        result = await SignupController(request, response);
+        result = await AdminSignupController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
     it("Should return status 422 if Passwords doesn't Match", async () => {
         request.body.password = "differentpassword";
-        result = await SignupController(request, response);
+        result = await AdminSignupController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
-    it("Should return status 400 if User already Exist", async () => {
+    it("Should return status 400 if Admin already Exist", async () => {
         User.findOne.mockImplementationOnce(() => ({
             id: 1,
             email: 'email',
             password: 'password',
         }));
-        result = await SignupController(request, response);
+        result = await AdminSignupController(request, response);
         expect(response.status).toHaveBeenCalledWith(400);
     });
 
@@ -54,21 +61,21 @@ describe('Signup Rountes', () => {
 
 describe('Login Routes', () => {
 
-    it("Should return status 422 if User Details are Incomplete", async () => {
+    it("Should return status 422 if Admin Details are Incomplete", async () => {
         request.body.email = undefined;
-        result = await LoginController(request, response);
+        result = await AdminLoginController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
-    it("Should return status 400 if User Not found", async () => {
+    it("Should return status 400 if Admin Not found", async () => {
         User.findOne.mockImplementationOnce(() => (undefined));
-        result = await LoginController(request, response);
+        result = await AdminLoginController(request, response);
         expect(response.status).toHaveBeenCalledWith(400);
     });
 
     it("Should return status 400 if password does not match", async () => {
         User.findOne.mockImplementationOnce(() => ({ password: 'not match' }));
-        result = await LoginController(request, response);
+        result = await AdminLoginController(request, response);
         expect(response.status).toHaveBeenCalledWith(400);
     });
 
@@ -76,21 +83,21 @@ describe('Login Routes', () => {
 
 describe('Forgot Password Routes', () => {
 
-    it("Should return status 422 if User Details are Incomplete", async () => {
+    it("Should return status 422 if Admin Details are Incomplete", async () => {
         request.body.email = undefined;
-        result = await ForgotController(request, response);
+        result = await AdminForgotController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
-    it("Should return status 400 if User Not found", async () => {
+    it("Should return status 400 if Admin Not found", async () => {
         User.findOne.mockImplementationOnce(() => (undefined));
-        result = await ForgotController(request, response);
+        result = await AdminForgotController(request, response);
         expect(response.status).toHaveBeenCalledWith(400);
     });
 
     it("Should return status 422 if Passwords doesn't Match", async () => {
         request.body.password = "differentpassword";
-        result = await SignupController(request, response);
+        result = await AdminSignupController(request, response);
         expect(response.status).toHaveBeenCalledWith(422);
     });
 
@@ -98,11 +105,10 @@ describe('Forgot Password Routes', () => {
 
 describe('Logout Routes', () => {
 
-    it("Should return status 500 if User was not logged in", async () => {
+    it("Should return status 500 if Admin was not logged in", async () => {
         const jwtoken = "Not a valid Token";
-        result = await LogoutController(request, response);
+        result = await AdminLogoutController(request, response);
         expect(response.status).toHaveBeenCalledWith(500);
     });
 
 });
-
