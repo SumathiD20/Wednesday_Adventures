@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: wednesday-Adventures
+  name: wednesday-adventures
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
