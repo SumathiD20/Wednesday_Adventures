@@ -20,16 +20,16 @@ RUN npm run build
 FROM node:18.19.1 as backend-builder
 
 # Set the working directory for the backend
-WORKDIR /app/backend
+WORKDIR /app/project-backend  # Updated to project-backend
 
 # Copy backend package.json and package-lock.json
-COPY backend/package.json backend/package-lock.json ./
+COPY project-backend/package.json project-backend/package-lock.json ./
 
 # Install backend dependencies
 RUN npm install
 
 # Copy the rest of the backend code
-COPY backend/ .
+COPY project-backend/ .
 
 # Stage 3: Create the final image
 FROM node:18.19.1
@@ -38,7 +38,7 @@ FROM node:18.19.1
 WORKDIR /app
 
 # Copy backend dependencies and source code
-COPY --from=backend-builder /app/backend .
+COPY --from=backend-builder /app/project-backend .
 
 # Copy the built frontend files
 COPY --from=frontend-builder /app/frontend/build ./public
