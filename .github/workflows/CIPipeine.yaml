@@ -1,28 +1,48 @@
-name: CI Pipeline
+name: CI Pipeline - Build, Test, and Dockerize
 
 on:
   push:
     branches:
-      - l00187927-WA-Jira18-CIPipeline 
+      - l00187927-WA-Jira18-CIPipeline
 
 jobs:
-  build-and-test:
+  build-test-dockerize:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Checkout the repository code
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Step 2: Set up Node.js (version 18.19.1)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '17'
+        node-version: '18.19.1'
 
-    - name: Install dependencies
+    # Step 3: Install npm dependencies for backend and frontend
+    - name: Install backend dependencies
+      working-directory: ./project-backend
       run: npm install
 
-    - name: Run build
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm install
+
+    # Step 4: Run npm build for frontend
+    - name: Build frontend
+      working-directory: ./frontend
       run: npm run build
 
-    - name: Run tests
-      run: npm test 
+    # Step 5: Run npm tests for backend and frontend
+    - name: Run backend tests
+      working-directory: ./project-backend
+      run: npm test
+
+    - name: Run frontend tests
+      working-directory: ./frontend
+      run: npm test
+
+    # Step 6: Build Docker image
+    - name: Build Docker image
+      run: docker build -t wednesday-adventures-app .
