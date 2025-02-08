@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - l00187927-WA-Jira18-CIPipeline
+      - main
+      - develop
 
 jobs:
   build-test-dockerize:
