@@ -57,3 +57,10 @@ describe('View Bookings Routes', () => {
         expect(response.status).toHaveBeenCalledWith(422);
     });
     
+    it("Should return status 400 if No Booking Found", async () => {
+        Booking.find.mockImplementationOnce(() => ([]));
+        result = await MyBookingController(request, response);
+        expect(response.status).toHaveBeenCalledWith(400);
+    })
+
+});
