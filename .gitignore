@@ -22,4 +22,5 @@ rad.json
 TestResults.xml
 #nodemodules
 Project-backend/node_modules
-iac-crossplane/aws-cred.txt 
+
+aws-cred.txt 
