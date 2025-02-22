@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
+      - main
   pull_request:
     branches:
       - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on PRs to this branch
+      - main
 
 jobs:
   sonarcloud:
@@ -42,7 +44,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
         with:
           args: >
-            -Dsonar.branch.name=l00187927-WA-Jira18-CIPipeline  # Analyze this branch
+            -Dsonar.branch.name=main  # Analyze this branch
 
       - name: SonarCloud Scan
-        run: sonar-scanner -Dsonar.branch.name=l00187927-WA-Jira18-CIPipeline -X
+        run: sonar-scanner -Dsonar.branch.name=main -X
