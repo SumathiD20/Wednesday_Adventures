@@ -1,0 +1,50 @@
+name: SonarCloud Analysis
+on:
+  push:
+    branches:
+      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
+      - main
+  pull_request:
+    branches:
+      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on PRs to this branch
+      - main
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}        
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.19.1'
+          cache: 'npm'
+
+      - name: Install dependencies (Backend)
+        run: |
+          cd project-backend
+          npm install
+
+      - name: Install dependencies (Frontend)
+        run: |
+          cd frontend
+          npm install
+
+      - name: Run SonarCloud analysis
+        if: always()  # Run this step even if previous steps fail
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
+        with:
+          args: >
+            -Dsonar.branch.name=main  # Analyze this branch
+
+      - name: SonarCloud Scan
+        run: sonar-scanner -Dsonar.branch.name=main -X
