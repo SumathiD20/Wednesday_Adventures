@@ -19,7 +19,7 @@ async function AdminSignupController(req, res) {
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
-
+        
         const newUser = new User({ firstname, lastname, email, password });
         await newUser.save();
 
@@ -82,6 +82,10 @@ async function AdminForgotController(req, res) {
     if (!email || !password || !cpassword) {
         return res.status(422).json({ message: 'Please fill all fields' });
     }
+    if (!email.endsWith("@wednesdayAdv.com")) {
+        return res.status(400).json({ message: 'Only wednesdayAdv.com emails are allowed' });
+    }
+    
 
     if (password !== cpassword) {
         return res.status(422).json({ message: 'Passwords do not match' });

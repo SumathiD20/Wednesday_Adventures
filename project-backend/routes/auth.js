@@ -240,3 +240,138 @@ router.post('/authenticate', Authenticate, (req, res) => {
   const email = req.email;
   res.json({ message: 'Secure route accessed successfully!', email: email });
 });
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Booking
+ *   description: Adventure booking endpoints
+ */
+//bookticket Route
+/**
+ * @swagger
+ * /bookticket:
+ *   post:
+ *     summary: Book adventure ticket
+ *     description: Book an adventure ticket for the specified user and adventures.
+ *     tags: [Booking]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userDetails:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                   address:
+ *                     type: string
+ *                   contact:
+ *                     type: string
+ *                   date:
+ *                     type: string
+ *                   adult:
+ *                     type: number
+ *                   children:
+ *                     type: number
+ *               selectedAdventures:
+ *                 type: object
+ *                 properties:
+ *                   adventure1:
+ *                     type: boolean
+ *                   adventure2:
+ *                     type: boolean
+ *                   adventure3:
+ *                     type: boolean
+ *             required:
+ *               - userDetails
+ *               - selectedAdventures
+ *     responses:
+ *       '201':
+ *         description: Booking successfully.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Booking successfully.
+ *               bookingnumber: WWA10001
+ *       '422':
+ *         description: Unprocessable Entity - Validation failed.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Please fill all fields.
+ *       '500':
+ *         description: Internal Server Error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Internal Server Error.
+ */
+
+router.post('/bookticket', BookTicketController);
+
+//mybookings Route
+/**
+ * @swagger
+ * /mybookings:
+ *   post:
+ *     summary: Get bookings for a specific user.
+ *     tags: [Booking]
+ *     description: Retrieve booking information for a user based on their email.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email.
+ *     responses:
+ *       200:
+ *         description: Successful response with booking information.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Booking Found
+ *               bookings:
+ *                 - bookingNumber: "WWA10001"
+ *                   name: John Doe
+ *                   email: john@example.com
+ *                   address: 123 Main St
+ *                   contact: 555-1234
+ *                   date: 2023-01-01
+ *                   adult: 2
+ *                   children: 1
+ *                   adventures:
+ *                     adventure1: true
+ *                     adventure2: false
+ *       400:
+ *         description: No booking found for the provided email.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: No Booking with this email.
+ *       422:
+ *         description: Incomplete or invalid request body.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: No booking for this Email
+ *       500:
+ *         description: Internal Server Error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Internal Server Error
+ */
+router.post("/mybookings", MyBookingController);
+
+module.exports = router;
