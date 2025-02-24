@@ -22,5 +22,10 @@ rad.json
 TestResults.xml
 #nodemodules
 Project-backend/node_modules
+<<<<<<< HEAD
 Documentation/~$g documentation.docx
 node_modules/
+=======
+
+aws-cred.txt 
+>>>>>>> d16c76200fef81de9b85bce15b999e20e451ae59
