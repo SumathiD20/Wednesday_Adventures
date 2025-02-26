@@ -19,7 +19,7 @@ spec:
       containers:
         - name: nginx
           imagePullPolicy: Always
-          image: nginx:1.14.2
+          image: wednesday-adventures
           ports:
             - containerPort: 80
       imagePullSecrets:
