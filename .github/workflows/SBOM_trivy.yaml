@@ -19,7 +19,7 @@ jobs:
       - name: Install Trivy  # ✅ Ensure Trivy is installed
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-          sudo mv trivy /usr/local/bin/
+          sudo mv ./bin/trivy /usr/local/bin/trivy
           trivy --version  # ✅ Verify installation
 
       - name: Generate SBOM Report
