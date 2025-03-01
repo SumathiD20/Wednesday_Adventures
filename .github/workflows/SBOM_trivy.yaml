@@ -24,7 +24,7 @@ jobs:
 
       - name: Generate SBOM Report
         run: |
-          trivy sbom --format spdx-json -o sbom.json --input-type dir .
+          trivy sbom --format spdx-json -o sbom.json ./package-lock.json
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
