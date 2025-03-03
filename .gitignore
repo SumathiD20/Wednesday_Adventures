@@ -23,9 +23,14 @@ TestResults.xml
 #nodemodules
 Project-backend/node_modules
 <<<<<<< HEAD
+<<<<<<< HEAD
 Documentation/~$g documentation.docx
 node_modules/
 =======
 
 aws-cred.txt 
 >>>>>>> d16c76200fef81de9b85bce15b999e20e451ae59
+=======
+
+aws-cred.txt 
+>>>>>>> 45dfd1ac9a0a9f202c516ade0728ae73a0fb4682
