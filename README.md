@@ -35,12 +35,12 @@
 | -------------     | -----------------        | ------------------       |
 | December 9, 2024  | Sriram Rajendran         | Sumathi Dhanasekaran     |
 | December 23, 2024 | Darshan Gowda            | Jayakumar Sundaramoorthy |
-| January 6, 2025   | Tony Joshua Kanaka       | Karthika Vijayakumar     |
-| January 20, 2025  | Sumathi Dhanasekaran     | Tony Joshua Kanaka       |
-| February 3, 2025  | Jayakumar Sundaramoorthy | Sriram Rajendran         |
-| February 17, 2025 | Karthika Vijayakumar     | Darshan Gowda            |
-| March 3, 2025     | Sriram Rajendran	       | Karthika Vijayakumar     |
-| March 17, 2025    | Darshan Gowda	           | Sumathi Dhanasekaran     |
+| January 27, 2025   | Tony Joshua Kanaka       | Karthika Vijayakumar     |
+| Febuaury 10, 2025  | Sumathi Dhanasekaran     | Tony Joshua Kanaka       |
+| Febuaury 24, 2025   | Jayakumar Sundaramoorthy   | Darshan Gowda          |
+| March 10, 2025      | Karthika Vijayakumar     | Tony Joshua Kanaka      |
+| March 24, 2025     | Sriram Rajendran	       | Sumathi Dhanasekaran     |
+
 
 ## 🚀 Features
 
