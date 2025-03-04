@@ -21,6 +21,8 @@ function Login() {
                 password: values.password,
             }, { withCredentials: true });
 
+            console.log("Response", response)
+
             // Show success notification
             notification.success({
                 message: 'Login Successful',

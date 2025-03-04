@@ -6,12 +6,12 @@ const getBookingList = ({ bookings }) => {
     const bookingslist = bookings.flatMap(booking => {
         const adventures = Object.keys(booking.adventures).flatMap(parkName => {
             return booking.adventures[parkName].map(adventureName => ({
-                address: booking.address,
-                adult: booking.adult,
-                children: booking.children,
+                // address: booking.address,
+                // adult: booking.adult,
+                // children: booking.children,
                 email: booking.email,
-                name: booking.name,
-                contact: booking.contact,
+                // name: booking.name,
+                // contact: booking.contact,
                 date: booking.date,
                 bookingnumber: booking.bookingnumber,
                 park: parkName,
@@ -39,7 +39,7 @@ async function BookTicketController(req, res) {
     }
 
     const totalbooking = await Booking.countDocuments({}, { hint: "_id_" });
-    const bookingnumber = "WWA" + 10000 + totalbooking;
+    const bookingnumber = "WWAP" + 7120 + totalbooking;
     const newBookingData = {
         ...userDetails,
         bookingnumber: bookingnumber,
