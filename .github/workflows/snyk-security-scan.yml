@@ -1,0 +1,68 @@
+name: Snyk Security Scan
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - l00187927-WA-Jira18-CIPipeline
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  snyk-security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    # Step 3: Install dependencies
+    - name: Install backend dependencies
+      working-directory: ./project-backend
+      run: npm ci
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    # Step 4: Install Snyk CLI
+    - name: Install Snyk CLI
+      run: npm install -g snyk
+
+    # Step 5: Authenticate Snyk
+    - name: Authenticate with Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk auth $SNYK_TOKEN
+
+    # Step 6: Run Snyk Dependency Scan (Backend & Frontend)
+    - name: Snyk Dependency Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk test --all-projects --severity-threshold=high
+
+    # Step 7: Run Snyk Docker Scan (Optional)
+    - name: Snyk Docker Scan
+      if: always()
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        docker build -t wednesday-adventures-app .
+        snyk container test wednesday-adventures-app --file=Dockerfile
+
+    # Step 8: Upload results to Snyk for tracking
+    - name: Monitor vulnerabilities in Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk monitor --all-projects
