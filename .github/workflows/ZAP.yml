@@ -31,7 +31,7 @@ jobs:
  
     # Step 3: Upload Dependency-Check Report as an Artifact
     - name: Upload Dependency-Check Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dependency-check-report
         path: dependency-check-report
@@ -47,7 +47,7 @@ jobs:
  
     # Step 5: Upload OWASP ZAP Report as an Artifact
     - name: Upload OWASP ZAP Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: zap-security-report
         path: zap.out
