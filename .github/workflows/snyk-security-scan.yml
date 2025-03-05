@@ -3,16 +3,12 @@ name: Snyk Security Scan
 on:
   push:
     branches:
-      - main
-      - develop
       - l00187927-WA-Jira18-CIPipeline
-  pull_request:
-    branches:
       - main
       - develop
 
 jobs:
-  snyk-security-scan:
+  build-test-security:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,14 +16,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Step 2: Set up Node.js
+    # Step 2: Set up Node.js (version 20)
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: 20
         cache: 'npm'
 
-    # Step 3: Install dependencies
+    # Step 3: Install npm dependencies for backend and frontend
     - name: Install backend dependencies
       working-directory: ./project-backend
       run: npm ci
@@ -40,29 +36,33 @@ jobs:
     - name: Install Snyk CLI
       run: npm install -g snyk
 
-    # Step 5: Authenticate Snyk
-    - name: Authenticate with Snyk
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: snyk auth $SNYK_TOKEN
-
-    # Step 6: Run Snyk Dependency Scan (Backend & Frontend)
-    - name: Snyk Dependency Scan
+    # Step 5: Run Snyk Security Scan (Using API Token Instead of Interactive Login)
+    - name: Run Snyk Security Scan
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: snyk test --all-projects --severity-threshold=high
 
-    # Step 7: Run Snyk Docker Scan (Optional)
-    - name: Snyk Docker Scan
-      if: always()
-      env:
-        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: |
-        docker build -t wednesday-adventures-app .
-        snyk container test wednesday-adventures-app --file=Dockerfile
-
-    # Step 8: Upload results to Snyk for tracking
+    # Step 6: Monitor vulnerabilities in Snyk
     - name: Monitor vulnerabilities in Snyk
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: snyk monitor --all-projects
+
+    # Step 7: Build Docker image
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-app:latest .
+
+    # Step 8: Verify Docker Image Exists Locally
+    - name: Verify Docker Image
+      run: docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-app || exit 1
+
+    # Step 9: Push Docker Image to Docker Hub (Requires Docker Credentials in GitHub Secrets)
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-app:latest
+
+    # Step 10: Verify Image on Docker Hub
+    - name: Verify Image on Docker Hub
+      run: docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-app:latest
