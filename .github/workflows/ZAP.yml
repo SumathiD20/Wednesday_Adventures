@@ -1,5 +1,5 @@
 name: OWASP Security Scan
- 
+
 on:
   push:
     branches:
@@ -10,49 +10,55 @@ on:
     branches:
       - main
       - develop
- 
+
 jobs:
   owasp-security-scan:
     runs-on: ubuntu-latest
- 
+
     steps:
     # Step 1: Checkout the repository code
     - name: Checkout code
-      uses: actions/checkout@v4
- 
+      uses: actions/checkout@v3
+
     # Step 2: Set up OWASP Dependency-Check
     - name: Run OWASP Dependency-Check
       uses: dependency-check/Dependency-Check_Action@main
       with:
         project: "Wednesday_Adventures"
         scan: "./"
-        format: "HTML JSON"
+        format: "HTML JSON"  # Fixed format with space separation
         out: "dependency-check-report"
- 
+
     # Step 3: Upload Dependency-Check Report as an Artifact
     - name: Upload Dependency-Check Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v2
       with:
         name: dependency-check-report
         path: dependency-check-report
- 
-    # Step 4: Set up OWASP ZAP for API Security Testing
+
+    # Step 4: Docker login (if required for pulling ZAP image)
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Step 5: Set up OWASP ZAP for API Security Testing
     - name: Run OWASP ZAP Baseline Scan
       uses: zaproxy/action-baseline@v0.7.0
       with:
         target: "http://localhost:3000"
         fail_action: false  # Set to 'true' if you want to fail the pipeline on high vulnerabilities
-        rules_file_name: ".zap/rules.tsv"
         cmd_options: "-a"
- 
-    # Step 5: Upload OWASP ZAP Report as an Artifact
+
+    # Step 6: Upload OWASP ZAP Report as an Artifact
     - name: Upload OWASP ZAP Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v2
       with:
         name: zap-security-report
         path: zap.out
- 
-    # Step 6: Analyze Scan Results (Optional: Fail Build on Critical Issues)
+
+    # Step 7: Analyze Scan Results (Optional: Fail Build on Critical Issues)
     - name: Fail Build on Critical Vulnerabilities
       run: |
         CRITICAL_COUNT=$(grep -c "CRITICAL" dependency-check-report/dependency-check-report.json || true)
