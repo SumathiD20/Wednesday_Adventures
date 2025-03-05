@@ -18,7 +18,7 @@ jobs:
     steps:
     # Step 1: Checkout the repository code
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
  
     # Step 2: Set up OWASP Dependency-Check
     - name: Run OWASP Dependency-Check
@@ -26,7 +26,7 @@ jobs:
       with:
         project: "Wednesday_Adventures"
         scan: "./"
-        format: "HTML,JSON"
+        format: "HTML JSON"
         out: "dependency-check-report"
  
     # Step 3: Upload Dependency-Check Report as an Artifact
