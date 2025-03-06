@@ -47,4 +47,4 @@ COPY --from=frontend-builder /app/frontend/build ./public
 EXPOSE 3000
 
 # Command to run the backend server
-CMD ["node", "index.js"]
+CMD ["node", "project-backend/index.js"]
