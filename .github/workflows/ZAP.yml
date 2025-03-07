@@ -27,7 +27,7 @@ jobs:
     # Start Application Server in the Background
     - name: Start Application Server
       run: |
-        nohup npm run start &  # Start the server in the background
+        nohup node index.js  # Start the server in the background
         sleep 40  # Give the server time to start
 
     # Verify Server is Running on Port 5000
