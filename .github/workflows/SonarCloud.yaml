@@ -15,21 +15,26 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Debug Secrets
-        run: |
-          if [[ -z "${{ secrets.SONAR_TOKEN }}" ]]; then
-            echo "❌ SONAR_TOKEN is missing!"
-            exit 1
-          else
-            echo "✅ SONAR_TOKEN is set."
-          fi
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18.19.1'
-        
+          cache: 'npm'
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4  # Updated version
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: |
+            ${{ runner.os }}-sonar
+
       - name: Install dependencies (Backend)
         run: |
           cd project-backend
@@ -41,6 +46,14 @@ jobs:
           npm install
 
       - name: Run SonarCloud analysis
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
+        if: always()  # Run this step even if previous steps fail
+        uses: sonarsource/sonarcloud-github-action@master
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
+        with:
+          args: >
+            -Dsonar.branch.name=main  # Analyze this branch
+
+      - name: SonarCloud Scan
+        run: sonar-scanner -Dsonar.branch.name=main -X
