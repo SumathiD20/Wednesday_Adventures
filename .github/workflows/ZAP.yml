@@ -27,6 +27,7 @@ jobs:
     # Start Application Server in the Background
     - name: Start Application Server
       run: |
+        cd project-backend
         nohup node index.js  # Start the server in the background
         sleep 40  # Give the server time to start
 
