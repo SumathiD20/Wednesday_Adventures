@@ -73,3 +73,14 @@ jobs:
       run: |
         docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
         docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
+
+    - name: Snyk Container Scan for Backend
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
+
+    - name: Snyk Container Scan for Frontend
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
+
