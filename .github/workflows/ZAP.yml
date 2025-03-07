@@ -38,12 +38,21 @@ jobs:
         path: dependency-check-report
 
     # ------------------------------
+    # Start local server (assuming Node.js app)
+    # ------------------------------
+    - name: Start Application Server
+      run: |
+        cd project-backend
+        npm install
+        npm start &  # Start the server in the background
+
+    # ------------------------------
     # OWASP ZAP Static Code Scan (SAST)
     # ------------------------------
     - name: Run OWASP ZAP Static Code Scan
       uses: zaproxy/action-full-scan@v0.11.0
       with:
-        target: "file://$(pwd)" 
+        target: "http://localhost:3000" 
         format: "json"
         cmd_options: "-a"
 
