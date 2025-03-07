@@ -52,13 +52,18 @@ jobs:
 
     - name: Run SonarQube Analysis
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # This sets the SONAR_TOKEN as an environment variable
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
-        sonar-scanner \
-          -Dsonar.projectKey=your_project_key \
-          -Dsonar.organization=your_organization \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        docker pull openjdk:17-jdk-slim  # Use Java 17
+        docker run --rm -v $(pwd):/workspace -w /workspace openjdk:17-jdk-slim bash -c "
+          apt-get update && apt-get install -y wget curl unzip
+          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+          unzip sonar-scanner.zip -d /opt/sonar-scanner
+          /opt/sonar-scanner/sonar-scanner-4.8.0.2856-linux/bin/sonar-scanner \
+            -Dsonar.projectKey=your_project_key \
+            -Dsonar.organization=your_organization \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}"
 
     - name: Upload SonarQube Report
       uses: actions/upload-artifact@v4
