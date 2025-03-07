@@ -43,16 +43,23 @@ jobs:
     - name: Set up SonarQube
       uses: SonarSource/sonarcloud-github-action@v1
       with:
-        sonar-token: ${{ secrets.SONAR_TOKEN }}
+        entryPoint: "sonar-scanner"
+        args: |
+          -Dsonar.projectKey=your_project_key
+          -Dsonar.organization=your_organization
+          -Dsonar.host.url=https://sonarcloud.io
+        projectBaseDir: .
 
     - name: Run SonarQube Analysis
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  # This sets the SONAR_TOKEN as an environment variable
       run: |
         sonar-scanner \
           -Dsonar.projectKey=your_project_key \
           -Dsonar.organization=your_organization \
           -Dsonar.host.url=https://sonarcloud.io \
           -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-    
+
     - name: Upload SonarQube Report
       uses: actions/upload-artifact@v4
       with:
