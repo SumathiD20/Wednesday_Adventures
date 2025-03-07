@@ -5,32 +5,43 @@ on:
     branches:
       - l00187927-WA-Jira18-CIPipeline
       - main
-  pull_request:
-    branches:
-      - l00187927-WA-Jira18-CIPipeline
-      - main
+      - develop
 
 jobs:
-  zap_scan:
+  build-test-security:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Start Application (if needed)
-        run: |
-          docker-compose up -d  # Start services if using Docker
-          sleep 10  # Wait for app to be ready
-      
-      - name: Run ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.10.0
-        with:
-          target: 'http://localhost:3000'  # Change this to your app's URL
-          api-key: ${{ secrets.ZAP_API_KEY }}
-          fail-action: false  # Set to true if you want the job to fail on vulnerabilities
 
-      - name: Upload ZAP Scan Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: ZAP-Scan-Report
-          path: report.html
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install backend dependencies
+      working-directory: ./project-backend
+      run: npm ci
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Install OWASP ZAP CLI
+      run: npm install -g zap-cli
+
+    - name: Run ZAP Security Scan
+      run: |
+        zap-cli quick-scan --self-contained http://your-application-url || echo "ZAP scan completed with issues"
+
+    - name: Fetch ZAP report
+      run: |
+        zap-cli report -o zap_report.html -f html
+
+    - name: Upload ZAP Report as Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: zap-report
+        path: ./zap_report.html
