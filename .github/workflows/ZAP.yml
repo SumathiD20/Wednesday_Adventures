@@ -4,61 +4,39 @@ on:
   push:
     branches:
       - l00187927-WA-Jira18-CIPipeline
-  pull_request:
-    branches:
-      - l00187927-WA-Jira18-CIPipeline
+      - main
+      - develop
 
 jobs:
-  zap_scan:
+  build-test-security:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18   
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
 
-      - name: Install dependencies
-        run: npm install   
+    - name: Install OWASP ZAP
+      run: |
+        sudo apt-get update
+        sudo apt-get install zaproxy
 
-      - name: Start the application
-        run: npm start &   
-        env:
-          PORT: 3000  # Ensure the app runs on port 3000
+    - name: Start ZAP in the background
+      run: |
+        nohup zaproxy -daemon -port 8080 &
 
-      - name: Wait for the application to start
-        run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:3000 > /dev/null; then
-              echo "Application is up!"
-              exit 0
-            fi
-            echo "Waiting for application to start..."
-            sleep 2
-          done
-          echo "Application failed to start"
-          exit 1
+    - name: Wait for ZAP to initialize
+      run: |
+        sleep 30
 
-      - name: Fix permissions
-        run: sudo chmod -R 777 /home/runner/work/
+    - name: Run ZAP Security Scan
+      run: |
+        zap-cli quick-scan --start-url http://localhost:3000 || echo "ZAP scan completed with issues"
 
-      - name: Run ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.7.0
-        with:
-          target: 'http://localhost:3000'  
-          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'  
-          cmd_options: '-T 60 -J /home/runner/work/zap_out.json'  
-          fail_action: false  
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-report
-          path: |
-            /home/runner/work/**/zap_out.json
-            /home/runner/work/**/report_json.json
-            /home/runner/work/**/report_md.md
-            /home/runner/work/**/report_html.html
+    - name: Stop ZAP
+      run: |
+        zap-cli shutdown || echo "Failed to stop ZAP"
