@@ -29,8 +29,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18.19.1'
-          cache: 'npm'  # This handles the caching for npm dependencies
-
+        
       - name: Install dependencies (Backend)
         run: |
           cd project-backend
