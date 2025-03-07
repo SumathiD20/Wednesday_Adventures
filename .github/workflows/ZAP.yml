@@ -13,13 +13,13 @@ on:
       - l00187927-WA-Jira18-CIPipeline
  
 jobs:
-  owasp-security-scan:
+  security-scan:
     runs-on: ubuntu-latest
  
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
- 
+
     # ------------------------------
     # OWASP Dependency-Check (SCA)
     # ------------------------------
@@ -38,20 +38,26 @@ jobs:
         path: dependency-check-report
 
     # ------------------------------
-    # OWASP ZAP Static Code Scan (SAST)
+    # SonarQube Static Code Scan (SAST)
     # ------------------------------
-    - name: Run OWASP ZAP Static Code Scan
-      uses: zaproxy/action-full-scan@v0.11.0
+    - name: Set up SonarQube
+      uses: SonarSource/sonarcloud-github-action@v1
       with:
-        target: "file://$(pwd)"  # Scan the local repo instead of a hosted app
-        format: "json"
-        cmd_options: "-a"
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
 
-    - name: Upload OWASP ZAP Report
+    - name: Run SonarQube Analysis
+      run: |
+        sonar-scanner \
+          -Dsonar.projectKey=your_project_key \
+          -Dsonar.organization=your_organization \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    
+    - name: Upload SonarQube Report
       uses: actions/upload-artifact@v4
       with:
-        name: zap-report
-        path: zap.out
+        name: sonar-report
+        path: sonar-report
 
     # ------------------------------
     # Fail Build on Critical/High Vulnerabilities
