@@ -1,65 +1,21 @@
 name: OWASP ZAP Security Scan
 
-on:
-  push:
-    branches:
-      - l00187927-WA-Jira18-CIPipeline
-      - main
-      - develop
+on: [push, pull_request]
 
 jobs:
-  zap-security-scan:
+  zap_scan:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
+    - name: Run OWASP ZAP
+      run: |
+        docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t http://example.com -g gen.conf -r testreport.html
+
+    - name: Upload ZAP Report
+      uses: actions/upload-artifact@v4  # Updated version here
       with:
-        node-version: 20
-        cache: 'npm'
-
-    - name: Install backend dependencies
-      working-directory: ./project-backend
-      run: npm ci
-
-    - name: Install frontend dependencies
-      working-directory: ./frontend
-      run: npm ci
-
-    - name: Build and start backend server
-      working-directory: ./project-backend
-      run: npm run build && npm start &
-      env:
-        NODE_ENV: production
-
-    - name: Build and start frontend server
-      working-directory: ./frontend
-      run: npm run build && npm start &
-      env:
-        NODE_ENV: production
-        REACT_APP_API_URL: http://localhost:3000  # Adjust port as needed
-
-    - name: Wait for servers to start
-      run: sleep 15  # Adjust based on server startup time
-
-    - name: Run OWASP ZAP Baseline Scan
-      uses: zaproxy/action-baseline@v0.10.0
-      with:
-        target: 'http://localhost:3000'  # Frontend URL
-        cmd_options: '-a -J -r'  # -a: active scan, -J: JSON report, -r: HTML report
-        report_html: 'zap-report.html'
-        report_json: 'zap-report.json'
-        report_md: 'zap-report.md'
-        docker_name: 'owasp/zap2docker-stable'
-
-    - name: Upload ZAP Reports
-      uses: actions/upload-artifact@v3
-      with:
-        name: zap-security-reports
-        path: |
-          zap-report.html
-          zap-report.json
-          zap-report.md
+        name: zap-report
+        path: testreport.html
