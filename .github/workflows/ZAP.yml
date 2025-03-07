@@ -8,14 +8,20 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4  # Updated to latest version
 
-    - name: Run OWASP ZAP
-      run: |
-        docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t http://example.com -g gen.conf -r testreport.html
-
+    - name: Run OWASP ZAP Baseline Scan
+      uses: zaproxy/action-baseline@v0.10.0  # Official ZAP action
+      with:
+        target: 'http://localhost:3000'  # Update to your application's URL
+        cmd_options: '-a -J -r'  # Active scan with reports
+        docker_image: 'ghcr.io/zaproxy/zaproxy:stable'  # Correct container registry
+        
     - name: Upload ZAP Report
-      uses: actions/upload-artifact@v4  # Updated version here
+      uses: actions/upload-artifact@v4
       with:
         name: zap-report
-        path: testreport.html
+        path: |
+          zap-report.html
+          zap-report.json
+          zap-report.md
