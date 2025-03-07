@@ -25,8 +25,8 @@ jobs:
       uses: dependency-check/Dependency-Check_Action@main
       with:
         project: "Wednesday_Adventures"
-        path: "./"
-        format: "ALL"
+        scan: "./"
+        format: "ALL"  
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
@@ -36,25 +36,15 @@ jobs:
         path: dependency-check-report
 
     # ------------------------------
-    # Docker Setup for ZAP Scan
-    # ------------------------------
-    - name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Pull OWASP ZAP Docker Image
-      run: |
-        docker pull owasp/zap2docker-stable
-
-    # ------------------------------
     # Run OWASP ZAP Baseline Scan
     # ------------------------------
+    - name: Pull OWASP ZAP Docker Image
+      run: docker pull owasp/zap2docker-stable
+
     - name: Run OWASP ZAP Baseline Scan
       run: |
         docker run --rm -v $(pwd):/zap/wrk:rw owasp/zap2docker-stable zap-baseline.py \
-          -t "http://localhost:3000" -r zap-report.html -a
+          -t "http://example.com" -r zap-report.html -a
 
     - name: Upload OWASP ZAP Report
       uses: actions/upload-artifact@v4
@@ -65,9 +55,10 @@ jobs:
     # ------------------------------
     # Fail Build on Critical Vulnerabilities
     # ------------------------------
-    - name: Fail Build on Critical Vulnerabilities
+    - name: Check for Critical Vulnerabilities
       run: |
-        CRITICAL_COUNT=$(jq '.dependencies[]?.vulnerabilities[]? | select(.severity=="Critical") | length' dependency-check-report/dependency-check-report.json | wc -l)
+        sudo apt-get install -y jq
+        CRITICAL_COUNT=$(jq '[.dependencies[]?.vulnerabilities[]? | select(.severity=="Critical")] | length' dependency-check-report/dependency-check-report.json)
         if [ "$CRITICAL_COUNT" -gt 0 ]; then
           echo "Critical vulnerabilities found! Failing the build."
           exit 1
