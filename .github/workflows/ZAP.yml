@@ -5,10 +5,12 @@ on:
     branches:
       - main
       - develop
+      - l00187927-WA-Jira18-CIPipeline  
   pull_request:
     branches:
       - main
       - develop
+      - l00187927-WA-Jira18-CIPipeline
 
 jobs:
   owasp-security-scan:
@@ -25,8 +27,8 @@ jobs:
       uses: dependency-check/Dependency-Check_Action@main
       with:
         project: "Wednesday_Adventures"
-        path: "./"
-        format: "ALL"  # 'ALL' generates multiple formats including JSON, HTML
+        path: "./"  # Scans the entire repository for dependencies
+        format: "ALL" 
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
@@ -49,12 +51,12 @@ jobs:
         docker pull owasp/zap2docker-stable
 
     # ------------------------------
-    # Run OWASP ZAP Baseline Scan
+    # Run OWASP ZAP Scan on Local Files (Without URL)
     # ------------------------------
-    - name: Run OWASP ZAP Baseline Scan
+    - name: Run OWASP ZAP Local Scan (Code Scanning)
       run: |
         docker run --rm -v $(pwd):/zap/wrk:rw owasp/zap2docker-stable zap-baseline.py \
-          -t "http://localhost:3000" -r zap-report.html -a
+          -t "file://$(pwd)" -r zap-report.html -a  
 
     - name: Upload OWASP ZAP Report
       uses: actions/upload-artifact@v4
