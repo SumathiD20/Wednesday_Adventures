@@ -1,4 +1,4 @@
-name: Snyk Security Scan
+name: Snyk Security Scan and Docker Build & Push
 
 on:
   push:
@@ -50,10 +50,10 @@ jobs:
       run: snyk monitor --all-projects || echo "Snyk monitor completed with issues"
 
     - name: Build Backend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest -f Docker.backend .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest -f ./Docker.backend .
 
     - name: Build Frontend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest -f Docker.frontend .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest -f ./Docker.frontend .
 
     - name: Verify Docker Images
       run: |
