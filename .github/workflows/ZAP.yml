@@ -26,7 +26,7 @@ jobs:
       with:
         project: "Wednesday_Adventures"
         path: "./"
-        format: "ALL"  # 'ALL' generates multiple formats including JSON, HTML
+        format: "ALL"
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
