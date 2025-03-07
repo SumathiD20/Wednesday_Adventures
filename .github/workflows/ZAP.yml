@@ -83,7 +83,7 @@ jobs:
     - name: Upload OWASP ZAP Report
       uses: actions/upload-artifact@v4
       with:
-        name: zap-report   # Valid artifact name
+        name: zap_scan_report
         path: zap.out
 
     # Fail Build on Critical/High Vulnerabilities
