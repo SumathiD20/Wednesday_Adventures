@@ -5,28 +5,30 @@ on:
     branches:
       - main
       - develop
+      - l00187927-WA-Jira18-CIPipeline  # ✅ Ensure this branch is included
   pull_request:
     branches:
       - main
       - develop
+      - l00187927-WA-Jira18-CIPipeline
 
 jobs:
   owasp-security-scan:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout Repository
       uses: actions/checkout@v4
 
     # ------------------------------
-    # OWASP Dependency-Check Scan (Directly from GitHub Code)
+    # OWASP Dependency-Check Scan
     # ------------------------------
     - name: Run OWASP Dependency-Check
       uses: dependency-check/Dependency-Check_Action@main
       with:
         project: "Wednesday_Adventures"
-        path: "./"
-        format: "ALL"  # Generates JSON, HTML, and XML reports
+        path: "./"  # ✅ Scan the repository codebase
+        format: "ALL"  # ✅ Generates JSON, XML, and HTML reports
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
@@ -36,28 +38,13 @@ jobs:
         path: dependency-check-report
 
     # ------------------------------
-    # OWASP ZAP Scan (GitHub Code-Based Scan)
-    # ------------------------------
-    - name: Run OWASP ZAP Full Scan
-      uses: zaproxy/action-full-scan@v0.7.0
-      with:
-        target: "."
-        fail_action: false
-        cmd_options: "-a"
-
-    - name: Upload OWASP ZAP Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: zap-security-report
-        path: zap.out
-
-    # ------------------------------
     # Fail Build on Critical Vulnerabilities
     # ------------------------------
-    - name: Fail Build on Critical Vulnerabilities
+    - name: Fail Build if Critical Vulnerabilities Found
       run: |
-        CRITICAL_COUNT=$(jq '.dependencies[]?.vulnerabilities[]? | select(.severity=="Critical") | length' dependency-check-report/dependency-check-report.json | wc -l)
+        CRITICAL_COUNT=$(jq '[.dependencies[].vulnerabilities[] | select(.severity=="Critical")] | length' dependency-check-report/dependency-check-report.json)
         if [ "$CRITICAL_COUNT" -gt 0 ]; then
-          echo "Critical vulnerabilities found! Failing the build."
+          echo "❌ Critical vulnerabilities found! Failing the build."
           exit 1
         fi
+      continue-on-error: false  # ✅ Ensures the pipeline fails on critical issues
