@@ -1,41 +1,31 @@
-name: OWASP ZAP Security Scan
+name: ZAP Security Scan
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - l00187927-WA-Jira18-CIPipeline
+  pull_request:
+    branches:
+      - l00187927-WA-Jira18-CIPipeline
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    services:
-      webapp:
-        image: node:20
-        ports:
-          - 3000:3000
-        working-directory: /app
-        volumes:
-          - ./:/app
-        # Start your application here
-        entrypoint: /bin/bash -c "npm install && npm start"
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Fix workspace permissions
-      run: sudo chmod -R 777 $GITHUB_WORKSPACE
+      - name: Run ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://your-application-url.com'  # Replace with your application URL
+          rules: 'rules.zap'  # Optional: Path to custom ZAP rules file
+          format: 'html'  # Report format (html, json, etc.)
+          output: 'zap-report.html'  # Output file name
 
-    - name: Run OWASP ZAP Baseline Scan
-      uses: zaproxy/action-baseline@v0.10.0
-      with:
-        target: 'http://webapp:3000'  # Use service name instead of localhost
-        cmd_options: '-a -J -r -j' 
-        docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
-        fail_action: false
-
-    - name: Upload ZAP Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: zap-report
-        path: |
-          report_html.html
-          report_md.md
-          report_json.json
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: zap-report
+          path: zap-report.html
