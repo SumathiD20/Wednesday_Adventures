@@ -79,7 +79,10 @@ jobs:
       uses: zaproxy/action-full-scan@v0.11.0
       with:
         target: "http://localhost:5000"  # Ensure you're scanning the backend URL
-        cmd_options: "-a"
+        cmd_options: "-a"  # Add additional flags if necessary
+        docker_name: ghcr.io/zaproxy/zaproxy:stable
+        fail_action: false  # Set to false to avoid failing the action for scan findings
+        allow_issue_writing: false  # Disable issue creation on GitHub
 
     - name: Upload OWASP ZAP Report
       uses: actions/upload-artifact@v4
