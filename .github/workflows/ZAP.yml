@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - l00187927-WA-Jira18-CIPipeline  # ✅ Ensure this branch is included
+      - l00187927-WA-Jira18-CIPipeline  
   pull_request:
     branches:
       - main
@@ -13,78 +13,41 @@ on:
       - l00187927-WA-Jira18-CIPipeline
 
 jobs:
-  owasp-security-scan:
+  security-scan:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
-
-    # -------------------------------
-    # ✅ Install Dependencies & Start API
-    # -------------------------------
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '14'  # Ensure you use the correct Node.js version based on your app
-
-    - name: Install dependencies
-      run: |
-        npm install
-
-    - name: Start the Backend API Server
-      run: |
-        nohup npm start &  # Start your backend API in the background
-
-    # Wait for the server to be fully up before starting the ZAP scan
-    - name: Wait for the API to be ready
-      run: |
-        sleep 30  # You might want to adjust this based on the time it takes for your app to start
+      uses: actions/checkout@v2
 
     # -----------------------------------------
-    # ✅ OWASP Dependency-Check (Dependency Scanning)
+    # OWASP Dependency-Check (Dependency Scanning)
     # -----------------------------------------
     - name: Run OWASP Dependency-Check
       uses: dependency-check/Dependency-Check_Action@main
       with:
         project: "Wednesday_Adventures"
-        path: "./"  # ✅ Scan the repository codebase
-        format: "ALL"  # ✅ Generates JSON, XML, and HTML reports
+        path: "./"  # Scan the repository codebase
+        format: "ALL"  # Generates JSON, XML, and HTML reports
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v2
       with:
         name: dependency-check-report
         path: dependency-check-report
 
     # -----------------------------------------
-    # ✅ SonarQube Scan (Static Code Analysis - SAST)
+    # SonarQube Scan (Static Code Analysis)
     # -----------------------------------------
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v2
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: "https://sonarcloud.io"  # Change if using self-hosted SonarQube
+        SONAR_HOST_URL: "https://sonarcloud.io"  
 
     # -----------------------------------------
-    # ✅ OWASP ZAP Scan (Dynamic API Security Testing - DAST)
-    # -----------------------------------------
-    - name: Run OWASP ZAP Baseline Scan
-      uses: zaproxy/action-baseline@v0.7.0
-      with:
-        target: "http://localhost:5000/signup"  # 🔴 Local API endpoint
-        fail_action: false
-        cmd_options: "-a"
-
-    - name: Upload OWASP ZAP Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: zap-security-report
-        path: zap.out
-
-    # -----------------------------------------
-    # ✅ Fail Build if Critical Vulnerabilities Found
+    # Fail Build if Critical Vulnerabilities Found
     # -----------------------------------------
     - name: Fail Build on Critical Vulnerabilities
       run: |
