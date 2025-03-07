@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - l00187927-WA-Jira18-CIPipeline  # ✅ Ensure this branch is included
+      - l00187927-WA-Jira18-CIPipeline  
   pull_request:
     branches:
       - main
@@ -28,7 +28,7 @@ jobs:
       with:
         project: "Wednesday_Adventures"
         path: "./"  # ✅ Scan the repository codebase
-        format: "ALL"  # ✅ Generates JSON, XML, and HTML reports
+        format: "ALL"  
         out: "./dependency-check-report"
 
     - name: Upload Dependency-Check Report
