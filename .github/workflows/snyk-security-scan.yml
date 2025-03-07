@@ -1,4 +1,4 @@
-name: Snyk Security Scan and Docker Build & Push
+name: Snyk Security Scan
 
 on:
   push:
@@ -48,28 +48,3 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: snyk monitor --all-projects || echo "Snyk monitor completed with issues"
-
-    - name: Build Backend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest -f ./Docker.backend .
-
-    - name: Build Frontend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest -f ./Docker.frontend .
-
-    - name: Verify Docker Images
-      run: |
-        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend || exit 1
-        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend || exit 1
-
-    - name: Log in to Docker Hub
-      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-    - name: Push Backend Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
-
-    - name: Push Frontend Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
-
-    - name: Verify Images on Docker Hub
-      run: |
-        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
-        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
