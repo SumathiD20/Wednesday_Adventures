@@ -31,7 +31,6 @@ jobs:
           echo "❌ package.json not found in project-backend!"
           exit 1
         fi
-
     # Debug - Show package.json dependencies
     - name: Show package.json Dependencies
       run: cat project-backend/package.json
@@ -42,7 +41,6 @@ jobs:
         cd project-backend
         rm -rf node_modules package-lock.json  # Remove old dependencies
         npm install  # Fresh install
-
     # Debug - Check if node_modules and express exist
     - name: Verify Express Installation
       run: ls -R project-backend/node_modules || echo "❌ node_modules directory not found!"
@@ -53,12 +51,10 @@ jobs:
         cd project-backend
         nohup node index.js &  # Start the backend
         sleep 40  # Wait for the server to start
-
     # Verify Server is Running on Port 5000
     - name: Check if Server is Running
       run: |
         curl -I http://localhost:5000 || (echo "❌ Server did not start!" && exit 1)
-
     # Run OWASP Dependency-Check (SCA) for Backend
     - name: Run OWASP Dependency-Check
       uses: dependency-check/Dependency-Check_Action@main
@@ -71,7 +67,7 @@ jobs:
     - name: Upload Dependency-Check Report
       uses: actions/upload-artifact@v4
       with:
-        name: dependency-check-report
+        name: dependency-check-report   # Valid artifact name
         path: dependency-check-report
 
     # Run OWASP ZAP Full Scan on Backend (localhost:5000)
@@ -87,7 +83,7 @@ jobs:
     - name: Upload OWASP ZAP Report
       uses: actions/upload-artifact@v4
       with:
-        name: zap-report
+        name: zap-report   # Valid artifact name
         path: zap.out
 
     # Fail Build on Critical/High Vulnerabilities
