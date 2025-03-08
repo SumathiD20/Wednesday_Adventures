@@ -47,7 +47,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
         with:
           args: >
-            -Dsonar.branch.name=${{ github.ref_name }}  # Dynamically analyze the correct branch
+            -Dsonar.branch.name=${{ github.ref_name }}   
 
       - name: SonarCloud Scan
         run: sonar-scanner -Dsonar.branch.name=${{ github.ref_name }} -X
