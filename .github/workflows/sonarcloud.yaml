@@ -1,34 +1,55 @@
-name: SonarCloud Analysis with Docker
+name: CI Pipeline with SonarCloud
 
 on:
   push:
     branches:
       - main
+      - develop
       - l00187927-WA-Jira18-CIPipeline   
 
   pull_request:
     branches:
       - main
+      - develop
 
 jobs:
   sonarcloud:
-    name: SonarCloud Scan using Docker
+    name: SonarCloud Analysis
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Build Docker image with SonarCloud
-      - name: Run SonarCloud Scan in Docker
-        run: |
-          docker run --rm \
-            -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
-            -e SONAR_PROJECT_KEY=${{ github.repository }} \
-            -v $GITHUB_WORKSPACE:/workspace \
-            sonarsource/sonar-scanner-cli:latest \
-            -Dsonar.projectKey=${{ github.repository }} \
-            -Dsonar.sources=./src \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adoptopenjdk'
+        java-version: '17'
+
+    - name: Cache SonarCloud dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar-${{ hashFiles('**/sonar-project.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-sonar-
+
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@v1
+      with:
+        sonar-project-key: SumathiD20_Wednesday_Adventures
+        sonar-organization: sumathid20
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: https://sonarcloud.io
+        SONAR_PROJECT_KEY: SumathiD20_Wednesday_Adventures
+        SONAR_ORG: sumathid20
+
+    - name: Upload SonarCloud results
+      uses: sonarsource/sonarcloud-github-action@v1
+      with:
+        sonar-token: ${{ secrets.SONAR_TOKEN }}
+        sonar-project-key: SumathiD20_Wednesday_Adventures
+        sonar-organization: sumathid20
