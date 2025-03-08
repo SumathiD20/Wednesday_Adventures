@@ -1,29 +1,23 @@
-name: SonarCloud Analysis
+name: SonarCloud-Analysis
+
 on:
   push:
     branches:
-      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
       - main
+      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
+
   pull_request:
     branches:
-      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on PRs to this branch
       - main
 
 jobs:
   sonarcloud:
+    name: Analyze with SonarCloud
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Debug Secrets
-        run: |
-          if [[ -z "${{ secrets.SONAR_TOKEN }}" ]]; then
-            echo "❌ SONAR_TOKEN is missing!"
-            exit 1
-          else
-            echo "✅ SONAR_TOKEN is set."
-          fi
+        uses: actions/checkout@v2
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -34,11 +28,14 @@ jobs:
         run: |
           cd project-backend
           npm install
+          
       - name: Install dependencies (Frontend)
         run: |
           cd frontend
           npm install
+
       - name: Run SonarCloud analysis
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
