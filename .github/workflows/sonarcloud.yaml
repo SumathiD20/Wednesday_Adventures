@@ -1,11 +1,10 @@
-name: CI Pipeline with SonarCloud and Docker
+name: SonarCloud and Docker
 
 on:
   push:
     branches:
       - main
       - l00187927-WA-Jira18-CIPipeline   
-
   pull_request:
     branches:
       - main
@@ -20,10 +19,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Docker
+    - name: Clean up Docker (if already installed)
       run: |
+        sudo apt-get remove -y docker docker-engine docker.io containerd runc
         sudo apt-get update
-        sudo apt-get install docker.io
+
+    - name: Install Docker
+      run: |
+        sudo apt-get install -y \
+          ca-certificates \
+          curl \
+          gnupg \
+          lsb-release
+
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
 
     - name: Build and run SonarCloud scan in Docker
       run: |
