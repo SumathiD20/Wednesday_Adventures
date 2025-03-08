@@ -1,40 +1,44 @@
-name: SonarCloud-Analysis
+name: SonarCloud Analysis
 
 on:
   push:
     branches:
-      - main
+      - main   
       - l00187927-WA-Jira18-CIPipeline   
       
   pull_request:
     branches:
-      - main
+      - main   
 
 jobs:
   sonarcloud:
+    name: SonarCloud Scan
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Use Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '14'
+      # Set up Node.js (Use Node.js version 20)
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-    - name: Cache Node.js modules
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+      # Install dependencies for both frontend and backend
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install backend dependencies
+        working-directory: ./project-backend
+        run: npm install
 
-    - name: Run SonarCloud Scan
-      uses: SonarSource/sonarqube-scan-action@v4.1.0
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      # Run SonarCloud scan
+      - name: Run SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v1
+        with:
+          args: -Dsonar.branch.name=${{ github.ref }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
