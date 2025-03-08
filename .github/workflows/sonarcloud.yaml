@@ -1,12 +1,10 @@
-name: CI Pipeline with SonarCloud
+name: CI Pipeline with SonarCloud and Docker
 
 on:
   push:
     branches:
       - main
       - develop
-      - l00187927-WA-Jira18-CIPipeline   
-
   pull_request:
     branches:
       - main
@@ -14,42 +12,27 @@ on:
 
 jobs:
   sonarcloud:
-    name: SonarCloud Analysis
+    name: SonarCloud Analysis with Docker
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'adoptopenjdk'
-        java-version: '17'
+    - name: Set up Docker
+      run: |
+        sudo apt-get update
+        sudo apt-get install docker.io
 
-    - name: Cache SonarCloud dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.sonar/cache
-        key: ${{ runner.os }}-sonar-${{ hashFiles('**/sonar-project.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-sonar-
-
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@v1
-      with:
-        sonar-project-key: SumathiD20_Wednesday_Adventures
-        sonar-organization: sumathid20
-        sonar-token: ${{ secrets.SONAR_TOKEN }}
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: https://sonarcloud.io
-        SONAR_PROJECT_KEY: SumathiD20_Wednesday_Adventures
-        SONAR_ORG: sumathid20
-
-    - name: Upload SonarCloud results
-      uses: sonarsource/sonarcloud-github-action@v1
-      with:
-        sonar-token: ${{ secrets.SONAR_TOKEN }}
-        sonar-project-key: SumathiD20_Wednesday_Adventures
-        sonar-organization: sumathid20
+    - name: Build and run SonarCloud scan in Docker
+      run: |
+        docker run --rm \
+          -e SONAR_HOST_URL=https://sonarcloud.io \
+          -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+          -v $(pwd):/usr/src \
+          sonarsource/sonar-scanner-cli:latest \
+          -Dsonar.projectKey=SumathiD20_Wednesday_Adventures \
+          -Dsonar.organization=sumathid20 \
+          -Dsonar.sources=project-backend,frontend \
+          -Dsonar.exclusions=**/node_modules/**,**/tests/** \
+          -Dsonar.sourceEncoding=UTF-8
