@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
   pull_request:
     branches:
       - main
