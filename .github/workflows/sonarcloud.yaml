@@ -26,6 +26,13 @@ jobs:
         with:
           node-version: '20'
 
+      # Install Java 17
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adoptopenjdk'
+          
       # Install dependencies for both frontend and backend
       - name: Install frontend dependencies
         working-directory: ./frontend
