@@ -37,7 +37,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 17
-          distribution: 'adoptopenjdk'
+          distribution: 'temurin'  # Use Adoptium distribution for JDK 17
 
       - name: Run SonarCloud analysis
         if: always()  # Run this step even if previous steps fail
@@ -47,7 +47,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
         with:
           args: >
-            -Dsonar.branch.name=${{ github.ref_name }}   
+            -Dsonar.branch.name=${{ github.ref_name }}  # Dynamically analyze the correct branch
 
       - name: SonarCloud Scan
         run: sonar-scanner -Dsonar.branch.name=${{ github.ref_name }} -X
