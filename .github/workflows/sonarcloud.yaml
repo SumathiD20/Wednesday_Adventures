@@ -27,15 +27,16 @@ jobs:
           cd project-backend
           npm ci
 
-      - name: SonarCloud Scan
+      - name: Run SonarCloud analysis
         uses: SonarSource/sonarcloud-github-action@v1
         with:
-          organization: YOUR_ORG_NAME
-          projectKey: YOUR_PROJECT_KEY
-          token: ${{ secrets.SONAR_TOKEN }}
-        
+          args: >
+            -Dsonar.branch.name=${{ github.ref_name }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload Quality Gate status to GitHub
         uses: sonarsource/sonarcloud-github-action@v1
         with:
-          sonar_token: ${{ secrets.SONAR_TOKEN }}
-
+          args: "-Dsonar.login=${{ secrets.SONAR_TOKEN }}"
