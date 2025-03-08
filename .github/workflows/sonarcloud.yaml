@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-      - develop
+      - l00187927-WA-Jira18-CIPipeline   
+
   pull_request:
     branches:
       - main
