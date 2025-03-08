@@ -4,16 +4,12 @@ on:
   push:
     branches:
       - main
-      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
-
-  pull_request:
-    branches:
-      - main
+      - l00187927-WA-Jira18-CIPipeline   
 
 jobs:
   sonarcloud:
-    name: Analyze with SonarCloud
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -21,21 +17,20 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18.19.1'
-          cache: 'npm'
+          node-version: '14'
 
-      - name: Install dependencies (Backend)
-        run: |
-          cd project-backend
-          npm install
-          
-      - name: Install dependencies (Frontend)
-        run: |
-          cd frontend
-          npm install
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-      - name: Run SonarCloud analysis
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run SonarCloud scan
         uses: SonarSource/sonarqube-scan-action@v4.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
