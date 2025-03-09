@@ -1,0 +1,38 @@
+name: Generate SBOM with Trivy
+
+on:
+  push:
+    branches:
+      - L00187746-Trivy-Sumathi
+      - l00187927-WA-Jira18-CIPipeline
+      - main
+  pull_request:
+    branches:
+      - L00187746-Trivy-Sumathi
+      - l00187927-WA-Jira18-CIPipeline
+      - main
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+     
+      - name: Install Trivy  # ✅ Ensure Trivy is installed
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          sudo mv ./bin/trivy /usr/local/bin/trivy
+          trivy --version  # ✅ Verify installation
+
+      - name: Generate SBOM Report
+        run: |
+          # trivy sbom --format spdx-json -o sbom.json ./package-lock.json
+          trivy fs --format spdx-json -o sbom.json .
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-report
+          path: sbom.json
