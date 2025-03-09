@@ -1,13 +1,14 @@
+---
 apiVersion: eks.aws.upbound.io/v1beta1
 kind: NodeGroup
 metadata:
-  name: eks-nodes-prod
+  name: eks-nodes-prod1
 spec:
   forProvider: 
     clusterNameRef:
       name: wednesday-adventures
     capacityType: ON_DEMAND
-    instanceTypes: ["t3.small"]
+    instanceTypes: ["t3.large"]
     labels:
       nodegroup-role: worker-prod
     nodeRoleArnRef:
@@ -15,7 +16,31 @@ spec:
     region: eu-west-1
     scalingConfig:
       - desiredSize: 1
-        maxSize: 5
+        maxSize: 4
+        minSize: 1
+    subnetIdRefs:
+      - name: private-subnet-1-eks
+      - name: private-subnet-2-eks
+
+---
+apiVersion: eks.aws.upbound.io/v1beta1
+kind: NodeGroup
+metadata:
+  name: eks-nodes-prod2
+spec:
+  forProvider: 
+    clusterNameRef:
+      name: wednesday-adventures
+    capacityType: ON_DEMAND
+    instanceTypes: ["t3.large"]
+    labels:
+      nodegroup-role: worker-prod
+    nodeRoleArnRef:
+      name: dev-demo-eks-nodes
+    region: eu-west-1
+    scalingConfig:
+      - desiredSize: 1
+        maxSize: 4
         minSize: 1
     subnetIdRefs:
       - name: private-subnet-1-eks
