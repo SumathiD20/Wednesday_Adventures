@@ -6,6 +6,7 @@ import UserRegister from './screens/user_register';
 import ForgotPassword from './screens/forgot_password';
 import Errorpage from './screens/error_page';
 import HomePage from './screens/homepage';
+import CartPage from './screens/cart_page';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/userRegister" element={<UserRegister />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/errorland" element={<Errorpage/>} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </Router>
     </div>

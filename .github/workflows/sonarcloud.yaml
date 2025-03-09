@@ -1,50 +1,49 @@
-name: SonarCloud Analysis
+name: SonarCloud and Docker
+
 on:
   push:
     branches:
-      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on this branch
       - main
+      - l00187927-WA-Jira18-CIPipeline   
   pull_request:
     branches:
-      - l00187927-WA-Jira18-CIPipeline  # Trigger analysis on PRs to this branch
       - main
+      - develop
 
 jobs:
   sonarcloud:
+    name: SonarCloud Analysis with Docker
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4.1.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}        
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.19.1'
-          cache: 'npm'
+    - name: Clean up Docker (if already installed)
+      run: |
+        sudo apt-get remove -y docker docker-engine docker.io containerd runc
+        sudo apt-get update
 
-      - name: Install dependencies (Backend)
-        run: |
-          cd project-backend
-          npm install
+    - name: Install Docker
+      run: |
+        sudo apt-get install -y \
+          ca-certificates \
+          curl \
+          gnupg \
+          lsb-release
 
-      - name: Install dependencies (Frontend)
-        run: |
-          cd frontend
-          npm install
+        curl -fsSL https://get.docker.com -o get-docker.sh
+        sudo sh get-docker.sh
 
-      - name: Run SonarCloud analysis
-        if: always()  # Run this step even if previous steps fail
-        uses: sonarsource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # SonarCloud token
-        with:
-          args: >
-            -Dsonar.branch.name=main  # Analyze this branch
-
-      - name: SonarCloud Scan
-        run: sonar-scanner -Dsonar.branch.name=main -X
+    - name: Build and run SonarCloud scan in Docker
+      run: |
+        docker run --rm \
+          -e SONAR_HOST_URL=https://sonarcloud.io \
+          -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+          -v $(pwd):/usr/src \
+          sonarsource/sonar-scanner-cli:latest \
+          -Dsonar.projectKey=SumathiD20_Wednesday_Adventures \
+          -Dsonar.organization=sumathid20 \
+          -Dsonar.sources=project-backend,frontend \
+          -Dsonar.exclusions=**/node_modules/**,**/tests/** \
+          -Dsonar.sourceEncoding=UTF-8

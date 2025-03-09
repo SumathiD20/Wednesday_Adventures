@@ -69,7 +69,10 @@ async function LoginController(req, res) {
       expires: new Date(Date.now() + 258920000000),
 
     });
-    res.status(200).json({ message: 'Login Succesful' });
+    res.status(200).json({
+      message: 'Login Successful',
+      email: email
+    });
 
   }
   catch (err) {
