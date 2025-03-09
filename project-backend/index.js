@@ -15,7 +15,7 @@
   // MongoDB connection
   require('./db/connection');
 
-  app.use(cors({ credentials: true, origin: `*`}));
+  app.use(cors({ credentials: true, origin: `${process.env.FRONTEND_URL}`}));
   app.use(cookieParser());
   app.use(bodyParser.json());
 
