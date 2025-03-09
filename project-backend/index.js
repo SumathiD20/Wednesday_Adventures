@@ -5,6 +5,7 @@
   const bodyParser = require('body-parser');
   const cookieParser = require('cookie-parser');
   const cors = require('cors');
+  const swaggerConfig = require('./swagger');
 
 
   const app = express();
@@ -18,6 +19,7 @@
   app.use(cors({ credentials: true, origin: `${process.env.FRONTEND_URL}`}));
   app.use(cookieParser());
   app.use(bodyParser.json());
+  swaggerConfig(app);
 
   app.use(require('./routes/auth'));
   app.use(require('./routes/adminauth'))
