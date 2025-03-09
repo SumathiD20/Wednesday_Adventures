@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - L00187746-Trivy-Sumathi
+      - l00187927-WA-Jira18-CIPipeline
+      - main
   pull_request:
     branches:
       - L00187746-Trivy-Sumathi
+      - l00187927-WA-Jira18-CIPipeline
+      - main
 
 jobs:
   sbom:
