@@ -3,10 +3,10 @@ name: Generate JSDoc Documentation
 on:
   push:
     branches:
-      - main # Trigger on push to the main branch
+      - Sumathi-JSD0c-Main # Trigger on push to the main branch
   pull_request:
     branches:
-      - main # Trigger on pull requests to the main branch
+      - Sumathi-JSD0c-Main # Trigger on pull requests to the main branch
 
 jobs:
   generate-docs:
