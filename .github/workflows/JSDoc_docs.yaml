@@ -9,6 +9,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read  # Allow read access to repository contents
+      actions: write  # Allow upload of artifacts and use of actions
+      id-token: read  # Allow read access to identity token if needed
+      artifacts: write  # Allow uploading artifacts
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,8 +31,8 @@ jobs:
         run: npx jsdoc -c jsdoc.json
 
       - name: Upload JSDoc as Artifact
-        uses: actions/upload-artifact@v3.1.0  # Updated to non-deprecated version
+        uses: actions/upload-artifact@v3.1.0
         with:
           name: jsdoc-artifact
           path: documentation/JSDoc
-          retention-days: 7  # Store artifact for 7 days (adjust as needed)
+          retention-days: 10  # Store artifact for 7 days (adjust as needed)
