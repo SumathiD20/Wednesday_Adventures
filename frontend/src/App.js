@@ -7,7 +7,11 @@ import ForgotPassword from './screens/forgot_password';
 import Errorpage from './screens/error_page';
 import HomePage from './screens/homepage';
 import CartPage from './screens/cart_page';
-
+/**
+ * The main App component that defines routes for the application.
+ * 
+ * @returns {JSX.Element} The rendered App component with routing.
+ */
 
 function App() {
   return (

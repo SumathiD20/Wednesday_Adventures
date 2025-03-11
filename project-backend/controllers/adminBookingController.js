@@ -1,6 +1,13 @@
 const Booking = require("../model/Booking");
 const adminMail = process.env.ADMIN_MAIL;
 
+/**
+ * Extracts and formats booking list data.
+ * @function getBookingList
+ * @param {Object} bookings - List of booking objects.
+ * @returns {Array<Object>} - Formatted booking list.
+ */
+
 //booking list function
 const getBookingList = ({ bookings }) => {
 
@@ -25,6 +32,15 @@ const getBookingList = ({ bookings }) => {
 
     return bookingslist;
 }
+
+/**
+ * Handles admin ticket booking.
+ * @async
+ * @function AdminBookTicketController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
 
 async function AdminBookTicketController(req, res) {
 

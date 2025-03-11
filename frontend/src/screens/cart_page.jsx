@@ -15,9 +15,19 @@ const stripePromise = loadStripe('pk_test_51QvPj5H0mEi2gjEIoypsFkdjuyAAbdqpInM77
 const { Header, Content } = Layout;
 const { Title, Paragraph } = Typography;
 
+/**
+ * CartPage component renders the user's shopping cart page.
+ * It allows users to view the items in their cart, remove items, and proceed to checkout using Stripe.
+ * 
+ * @returns {JSX.Element} The CartPage component
+ */
 function CartPage() {
     const { cart, removeFromCart, clearCart, setCart } = useCartStore();
 
+    /**
+     * useEffect hook that retrieves the preserved cart from localStorage on component mount.
+     * If the preserved cart exists, it sets it in the state and removes the item from localStorage.
+     */
     useEffect(() => {
         const preservedCart = localStorage.getItem('preservedCart');
         if (preservedCart) {
@@ -26,6 +36,13 @@ function CartPage() {
         }
     }, [setCart]);
 
+    /**
+     * Handles the checkout process by interacting with Stripe API.
+     * It creates a session with the Stripe API and redirects the user to Stripe for payment.
+     * 
+     * @async
+     * @throws {Error} If there is an error during the checkout process, the cart is restored, and an error notification is displayed.
+     */
     const handleCheckout = async () => {
         // Preserve cart in localStorage before checkout
         localStorage.setItem('preservedCart', JSON.stringify(cart));
@@ -82,7 +99,6 @@ function CartPage() {
             });
 
             if (result.error) throw result.error;
-            
 
         } catch (err) {
             // Restore cart on error

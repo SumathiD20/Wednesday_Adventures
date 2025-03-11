@@ -1,3 +1,29 @@
+/**
+ * ForgotPassword component that allows users and admins to reset their passwords.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <ForgotPassword />
+ * )
+ * 
+ * @description
+ * This component provides a form to allow both users and admins to reset their password. 
+ * It uses an Ant Design `Tabs` component to toggle between "User" and "Admin" views. 
+ * It performs validation for matching passwords and ensures that the password is at least 7 characters long.
+ * Upon successful submission, it sends the password reset request to the backend using `axios` and shows a notification.
+ * If successful, it redirects the user to the login page.
+ * 
+ * @state activeTab {string} - Stores the active tab state ("User" or "Admin").
+ * 
+ * @methods
+ * - handleUserForgot(values): Handles the password reset request for users.
+ * - handleAdminForgot(values): Handles the password reset request for admins.
+ * 
+ * @prop {string} email - The email address entered by the user/admin.
+ * @prop {string} password - The new password entered by the user/admin.
+ * @prop {string} cpassword - The confirmation password entered by the user/admin.
+ */
 import React, { useState } from 'react';
 import { Button, Form, Input, notification, Tabs } from "antd";
 import { Link, useNavigate } from "react-router-dom";
@@ -5,10 +31,22 @@ import axios from "axios";
 import backgroundImage from '../assets/theme-park-portal-bg.jpg';
 import "./forgot_password.css";
 
+/**
+ * ForgotPassword component that handles both user and admin password reset requests.
+ *
+ * @returns {JSX.Element} The rendered ForgotPassword component.
+ */
 function ForgotPassword() {
     const navigateToPage = useNavigate();
     const [activeTab, setActiveTab] = useState("User");
 
+    /**
+     * Handles the password reset request for users.
+     * Ensures the passwords match, and sends the reset request to the backend.
+     * Displays success/error notifications based on the response.
+     *
+     * @param {object} values - The form values containing email, password, and confirm password.
+     */
     const handleUserForgot = async (values) => {
         console.log("values", values);
 
@@ -50,6 +88,13 @@ function ForgotPassword() {
         }
     };
 
+    /**
+     * Handles the password reset request for admins.
+     * Ensures the passwords match, and sends the reset request to the backend.
+     * Displays success/error notifications based on the response.
+     *
+     * @param {object} values - The form values containing email, password, and confirm password.
+     */
     const handleAdminForgot = async (values) => {
         console.log("values", values);
 
@@ -134,11 +179,12 @@ function ForgotPassword() {
                             name="password"
                             layout="vertical"
                             label={<span style={{ fontSize: "20px" }}>Enter New Password</span>}
-                            rules={[{ required: true, message: "Please enter your new password!" },
-                            {
-                                min: 7, // Ensures password is more than 6 characters
-                                message: 'Password must be more than 6 characters long!',
-                            }
+                            rules={[
+                                { required: true, message: "Please enter your new password!" },
+                                {
+                                    min: 7, // Ensures password is more than 6 characters
+                                    message: 'Password must be more than 6 characters long!',
+                                }
                             ]}
                         >
                             <Input.Password placeholder="Enter your New password" size="large" />
@@ -149,11 +195,12 @@ function ForgotPassword() {
                             name="cpassword"
                             layout="vertical"
                             label={<span style={{ fontSize: "20px" }}>Confirm New Password</span>}
-                            rules={[{ required: true, message: "Please confirm your new password!" },
-                            {
-                                min: 7, // Ensures password is more than 6 characters
-                                message: 'Password must be more than 6 characters long!',
-                            }
+                            rules={[
+                                { required: true, message: "Please confirm your new password!" },
+                                {
+                                    min: 7, // Ensures password is more than 6 characters
+                                    message: 'Password must be more than 6 characters long!',
+                                }
                             ]}
                         >
                             <Input.Password placeholder="Enter your New password" size="large" />
@@ -195,11 +242,12 @@ function ForgotPassword() {
                             name="password"
                             layout="vertical"
                             label={<span style={{ fontSize: "20px" }}>Enter New Password</span>}
-                            rules={[{ required: true, message: "Please enter your new password!" },
-                            {
-                                min: 7, // Ensures password is more than 6 characters
-                                message: 'Password must be more than 6 characters long!',
-                            }
+                            rules={[
+                                { required: true, message: "Please enter your new password!" },
+                                {
+                                    min: 7, // Ensures password is more than 6 characters
+                                    message: 'Password must be more than 6 characters long!',
+                                }
                             ]}
                         >
                             <Input.Password placeholder="Enter your New password" size="large" />
@@ -210,11 +258,12 @@ function ForgotPassword() {
                             name="cpassword"
                             layout="vertical"
                             label={<span style={{ fontSize: "20px" }}>Confirm New Password</span>}
-                            rules={[{ required: true, message: "Please confirm your new password!" },
-                            {
-                                min: 7, // Ensures password is more than 6 characters
-                                message: 'Password must be more than 6 characters long!',
-                            }
+                            rules={[
+                                { required: true, message: "Please confirm your new password!" },
+                                {
+                                    min: 7, // Ensures password is more than 6 characters
+                                    message: 'Password must be more than 6 characters long!',
+                                }
                             ]}
                         >
                             <Input.Password placeholder="Enter your New password" size="large" />

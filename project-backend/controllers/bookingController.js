@@ -1,5 +1,11 @@
 const Booking = require("../model/Booking");
-
+/**
+ * Processes and returns a structured list of bookings.
+ * 
+ * @param {Object} params - Object containing the bookings array.
+ * @param {Array} params.bookings - List of bookings from the database.
+ * @returns {Array} - Returns an array of formatted booking details.
+ */
 //booking list function
 const getBookingList = ({ bookings }) => {
 
@@ -24,6 +30,16 @@ const getBookingList = ({ bookings }) => {
 
     return bookingslist;
 }
+
+/**
+ * Handles ticket booking requests.
+ * 
+ * @async
+ * @function BookTicketController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ */
 
 
 async function BookTicketController(req, res) {
@@ -59,6 +75,16 @@ async function BookTicketController(req, res) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+/**
+ * Retrieves user bookings based on email.
+ * 
+ * @async
+ * @function MyBookingController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {void}
+ */
 
 async function MyBookingController(req, res) {
     const { email } = req.body;

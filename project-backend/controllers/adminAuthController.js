@@ -2,6 +2,15 @@ const User = require('../model/User');
 const bcrypt = require('bcrypt');
 const adminMail = process.env.ADMIN_MAIL;
 
+/**
+ * Controller for admin signup.
+ * @async
+ * @function AdminSignupController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+
 
 
 async function AdminSignupController(req, res) {
@@ -36,6 +45,15 @@ async function AdminSignupController(req, res) {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+/**
+ * Controller for admin login.
+ * @async
+ * @function AdminLoginController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
 
 async function AdminLoginController(req, res) {
     const { email, password } = req.body;
@@ -77,6 +95,13 @@ async function AdminLoginController(req, res) {
     }
 
 }
+
+/**
+ * Controller for admin logout.
+ * @function AdminLogoutController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 function AdminLogoutController(req, res) {
     try {

@@ -1,61 +1,40 @@
-import React, {useEffect, useState} from 'react';
-import { Layout, Card, Row, Col, Button, Image, Flex, notification } from 'antd';
-import { Link } from 'react-router-dom';
-import {
-    HomeOutlined,
-    UserOutlined,
-    ShoppingCartOutlined,
-} from '@ant-design/icons';
-import logoImage from "../assets/waLogo.jpeg"
-import welcomeImage from "../assets/wawelcomeimage.png"
-import useCartStore from '../store/store_cart_items';
-import wheelRide from "../assets/wheelride.jpeg"
-import rollerCoaster from "../assets/rollercoaster.jpg"
-import darkWood from "../assets/darkwood.jpeg"
-import waterSlide from "../assets/waterslide.jpeg"
-
-const { Header, Content } = Layout;
-
-// Sample product data
-const products = [
-    {
-        id: 1,
-        name: 'Darkwood',
-        description: 'A suspended dark ride through a decaying Victorian mansion inhabited by spectral figures. Riders navigate secret passages and encounter floating furniture, whispering portraits, and sudden drops into shadowy realms.',
-        image: darkWood,
-        tagline: "Where the walls have eyes... and teeth!",
-        price: 19.99,
-    },
-    {
-        id: 2,
-        name: 'Wicked Wheel',
-        description: 'TA 360-degree rotating Ferris wheel with glass-bottom gondolas that stops riders mid-air to face macabre animatronic scenes of a cursed circus. Special "Midnight Spin" mode reverses direction unexpectedly.',
-        image: wheelRide,
-        tagline: "The view is killer... literally!",
-        price: 29.99,
-    },
-    {
-        id: 3,
-        name: 'Thrill Chill Park',
-        description: `Reaper's Rage" - A floorless coaster with 5 inversions and 95° drops and "Specter's Glide" - A winged coaster with floating mist effects and smooth arcs. This Roller coaster ride is imperative to get the taste of air while going full speed.`,
-        image: rollerCoaster,
-        tagline: "Thrill & Chill Zone: Dual Coaster Complex",
-        price: 39.99,
-    },
-    {
-        id: 4,
-        name: 'Water Amaze',
-        description: 'A high-speed water coaster that twists through ancient aqueducts and crumbling ruins, featuring surprise geyser eruptions, waterfall drenches, and a final 45-degree plunge into a glowing subterranean grotto.   ',
-        image: waterSlide,
-        tagline: "Stay dry if you dare!",
-        price: 49.99,
-    },
-];
-
+/**
+ * HomePage component displays the landing page of the adventure park, including product cards and a welcome message.
+ * It handles adding items to the cart, navigation, and showing success notifications.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <HomePage />
+ * )
+ */
 function HomePage() {
+    /**
+     * Adds a product to the cart using the store's `addToCart` function.
+     * @function addToCart
+     * @param {Object} product - The product to be added to the cart.
+     */
     const addToCart = useCartStore((state) => state.addToCart);
+
+    /**
+     * The current state of the cart containing the items.
+     * @type {Array} cart
+     */
     const cart = useCartStore((state) => state.cart);
+
+    /**
+     * Clears the cart using the store's `clearCart` function.
+     * @function clearCart
+     */
     const clearCart = useCartStore((state) => state.clearCart);
+
+    /**
+     * useEffect hook that runs once the component is mounted. 
+     * It checks for the query parameter from Stripe success and shows a success notification.
+     * 
+     * @function useEffect
+     * @param {Function} clearCart - The function to clear the cart after successful purchase.
+     */
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
         
@@ -74,9 +53,12 @@ function HomePage() {
         }
     }, [clearCart]);
 
-    
-
-    // Add this to handle browser back/forward navigation
+    /**
+     * useEffect hook to handle browser navigation events (back/forward buttons).
+     * This will clean up query parameters related to Stripe success.
+     * 
+     * @function useEffect
+     */
     useEffect(() => {
         const handleNavigation = () => {
             const queryParams = new URLSearchParams(window.location.search);
@@ -134,6 +116,7 @@ function HomePage() {
 
             {/* Main Content */}
             <Content style={{ padding: '20px' }}>
+                {/* Welcome Section */}
                 <div className="welcome-container" style={{
                     textAlign: 'center',
                     padding: '40px 0',
@@ -159,6 +142,7 @@ function HomePage() {
                         Your portal to a Wednesday-themed adventure park
                     </p>
                 </div>
+
                 {/* Large Banner Image */}
                 <div style={{ display: "Flex", justifyContent: "center" }}>
                     <Image
@@ -168,6 +152,7 @@ function HomePage() {
                     />
                 </div>
 
+                {/* Explore Section */}
                 <div className="welcome-container" style={{
                     textAlign: 'center',
                     padding: '40px 0',
@@ -296,6 +281,7 @@ function HomePage() {
                     ))}
                 </Row>
 
+                {/* More Rides Section */}
                 <div className="welcome-container" style={{
                     textAlign: 'center',
                     padding: '40px 0',

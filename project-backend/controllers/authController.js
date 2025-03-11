@@ -2,6 +2,15 @@
 const User = require("../model/User");     //Mongoose model representing the user in the database
 const bcrypt = require('bcrypt');          // Hashing and comparing passwords
 
+/**
+ * Handles user signup.
+ * @async
+ * @function SignupController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+
 
 async function SignupController(req, res) {
 
@@ -41,6 +50,15 @@ async function SignupController(req, res) {
     res.json({ message: 'Internal Server Error' });
   }
 }
+
+/**
+ * Handles user login.
+ * @async
+ * @function LoginController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
 
 async function LoginController(req, res) {
   const { email, password } = req.body;
@@ -82,6 +100,15 @@ async function LoginController(req, res) {
 
 }
 
+/**
+ * Handles password reset for a user.
+ * @async
+ * @function ForgotController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ * @returns {Promise<void>}
+ */
+
 async function ForgotController(req, res) {
   const { email, password, cpassword } = req.body;
 
@@ -112,6 +139,13 @@ async function ForgotController(req, res) {
   }
 
 }
+
+/**
+ * Handles user logout.
+ * @function LogoutController
+ * @param {Object} req - Express request object.
+ * @param {Object} res - Express response object.
+ */
 
 function LogoutController(req, res) {
   try {
