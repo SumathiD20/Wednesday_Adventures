@@ -1,0 +1,31 @@
+name: Generate JSDoc
+
+on:
+  push:
+    branches:
+      - L00187746-Trivy-Sumathi
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate JSDoc
+        run: npx jsdoc -c jsdoc.json
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: L00187746-Trivy-Sumathi
+          folder: documentation/JSDoc
