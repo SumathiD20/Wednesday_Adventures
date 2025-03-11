@@ -3,10 +3,10 @@ name: Generate JSDoc Documentation
 on:
   push:
     branches:
-      - Sumathi-JSD0c-Main # Trigger on push to the main branch
+      - main # Trigger on push to the main branch
   pull_request:
     branches:
-      - Sumathi-JSD0c-Main # Trigger on pull requests to the main branch
+      - main # Trigger on pull requests to the main branch
 
 jobs:
   generate-docs:
@@ -41,7 +41,7 @@ jobs:
           npx jsdoc -c jsdoc.json
 
       - name: Upload documentation as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jsdoc-documentation
           path: |
