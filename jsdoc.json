@@ -1,10 +1,15 @@
 {
-  "source": {
-    "include": ["routes", "controllers"],
-    "includePattern": ".js$",
-    "excludePattern": "(node_modules/|docs)"
-  },
-  "opts": {
-    "destination": "documentation/JSDoc"
+    "tags": {
+      "allowUnknownTags": true
+    },
+    "source": {
+      "include": ["project-backend", "frontend"],
+      "includePattern": "\\.(js|jsx)$",
+      "excludePattern": "(node_modules|dist)"
+    },
+    "opts": {
+      "destination": "./documentation/JSDoc"
+    },
+    "plugins": []
   }
-}
+  
