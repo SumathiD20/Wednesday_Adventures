@@ -32,7 +32,7 @@ jobs:
 
       - name: Generate JSDoc (Backend)
         working-directory: ./project-backend
-        run: npx jsdoc -c jsdoc.json
+        run: npx jsdoc -c jsdoc.json --verbose
 
       - name: Install dependencies (Frontend)
         working-directory: ./frontend
@@ -40,7 +40,7 @@ jobs:
 
       - name: Generate JSDoc (Frontend)
         working-directory: ./frontend
-        run: npx jsdoc -c jsdoc.json
+        run: npx jsdoc -c jsdoc.json --verbose
 
       - name: Upload documentation as artifact
         uses: actions/upload-artifact@v4

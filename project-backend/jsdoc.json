@@ -1,6 +1,6 @@
 {
     "source": {
-      "include": ["."], 
+      "include": ["controllers","routes","model","middleware","db","__tests__"], 
       "exclude": ["node_modules", "docs"] 
     },
     "opts": {
