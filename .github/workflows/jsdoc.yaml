@@ -19,6 +19,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Debug directory structure
+        run: |
+          echo "Backend directory structure:"
+          ls -R project-backend
+          echo "Frontend directory structure:"
+          ls -R frontend
 
       - name: Install dependencies (Backend)
         working-directory: ./project-backend
