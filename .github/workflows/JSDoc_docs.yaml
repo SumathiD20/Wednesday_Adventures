@@ -3,36 +3,35 @@ name: Generate JSDoc
 on:
   push:
     branches:
-      - L00187746-Trivy-Sumathi
+      - L00187746-Trivy-Sumathi  # Trigger the workflow on pushes to this branch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read  # Allow read access to repository contents
-      actions: write  # Allow upload of artifacts and use of actions
-      id-token: read  # Allow read access to identity token if needed
-      artifacts: write  # Allow uploading artifacts
+    runs-on: ubuntu-latest  # Use an Ubuntu runner
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Set up Node.js
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18  # Use Node.js version 18
 
+      # Step 3: Install dependencies (npm install)
       - name: Install dependencies
         run: npm install
 
+      # Step 4: Generate JSDoc from source files
       - name: Generate JSDoc
         run: npx jsdoc -c jsdoc.json
 
+      # Step 5: Upload generated JSDoc files as an artifact
       - name: Upload JSDoc as Artifact
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v3.1.0  # Using the non-deprecated version
         with:
-          name: jsdoc-artifact
-          path: documentation/JSDoc
-          retention-days: 10  # Store artifact for 7 days (adjust as needed)
+          name: jsdoc-artifact  # Name of the artifact
+          path: documentation/JSDoc  # Path to the generated documentation
+          retention-days: 7  # The artifact will be kept for 7 days (you can adjust this)
