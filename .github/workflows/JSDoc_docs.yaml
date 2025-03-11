@@ -24,8 +24,9 @@ jobs:
       - name: Generate JSDoc
         run: npx jsdoc -c jsdoc.json
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload JSDoc as Artifact
+        uses: actions/upload-artifact@v3
         with:
-          branch: L00187746-Trivy-Sumathi
-          folder: documentation/JSDoc
+          name: jsdoc-artifact
+          path: documentation/JSDoc
+          retention-days: 7  # Store artifact for 7 days (adjust as needed)
