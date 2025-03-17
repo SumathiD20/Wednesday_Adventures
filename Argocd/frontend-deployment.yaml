@@ -33,4 +33,5 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 80
-  type: LoadBalancer  # You can change this to ClusterIP if you're not exposing it externally
+      nodePort: 30001  # You can change this to 80 if you're not exposing it externally
+  type: NodePort
