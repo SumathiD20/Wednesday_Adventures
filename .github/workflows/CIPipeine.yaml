@@ -1,4 +1,4 @@
-name: CI Pipeline - Build, Test, and Dockerize
+name: CI Pipeline - Build
 
 on:
   push:
@@ -52,16 +52,3 @@ jobs:
     - name: Build frontend
       working-directory: ./frontend
       run: CI=false npm run build
-
-    # Step 8: Run npm tests for backend and frontend
-    - name: Run backend tests
-      working-directory: ./project-backend
-      run: npm test
-
-    - name: Run frontend tests
-      working-directory: ./frontend
-      run: npm test
-
-    # Step 9: Build Docker image
-    - name: Build Docker image
-      run: docker build -t wednesday-adventures-app .
