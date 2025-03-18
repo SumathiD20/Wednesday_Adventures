@@ -14,7 +14,7 @@ RUN npm install
 COPY frontend/ .
 
 # Set the environment variable for the frontend build
-ENV REACT_APP_ENV_ENDPOINT=http://backend:5000
+ENV REACT_APP_ENV_ENDPOINT=http://ab66537699d63433b9eca08c909f3481-1803609063.eu-west-1.elb.amazonaws.com:5000
 
 # Build the frontend
 RUN npm run build
