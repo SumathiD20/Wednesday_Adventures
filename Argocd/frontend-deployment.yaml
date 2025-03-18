@@ -21,7 +21,7 @@ spec:
             - containerPort: 80
           env:
             - name: REACT_APP_ENV_ENDPOINT
-              value: "http://backend:5000"  # backend service name
+              value: "http://ab66537699d63433b9eca08c909f3481-1803609063.eu-west-1.elb.amazonaws.com:5000"  # backend service name
 
 
 
