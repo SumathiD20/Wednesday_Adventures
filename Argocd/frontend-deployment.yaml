@@ -1,12 +1,11 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: default
-  labels:
-    app: frontend
+  namespace: prod
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: frontend
@@ -16,22 +15,27 @@ spec:
         app: frontend
     spec:
       containers:
-      - name: frontend
-        image: l00187746/wednesday-adventures-frontend # frontend image name
-        ports:
-        - containerPort: 80
+        - name: frontend
+          image: l00187746/wednesday-adventures-frontend  # frontend image
+          ports:
+            - containerPort: 80
+          env:
+            - name: REACT_APP_ENV_ENDPOINT
+              value: "http://backend:5000"  # backend service name
+
+
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontend-service
-  namespace: default
+  name: frontend
 spec:
   selector:
     app: frontend
   ports:
     - protocol: TCP
-      port: 8000
+      port: 80
       targetPort: 80
       nodePort: 30001  # You can change this to 80 if you're not exposing it externally
   type: NodePort

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  MONGO_ROOT_USER=l00187746
+  MONGO_DB=WednesdayAdventures
+  ADMIN_MAIL=support@wednesdaysadventures.com
+  FRONTEND_URL=http://localhost:8000

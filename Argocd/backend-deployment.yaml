@@ -1,10 +1,9 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: default
-  labels:
-    app: backend
+  namespace: prod
 spec:
   replicas: 1
   selector:
@@ -16,19 +15,20 @@ spec:
         app: backend
     spec:
       containers:
-      - name: backend
-        image: l00187746/wednesday-adventures-backend # backend image name
-        ports:
-        - containerPort: 5000
-        env:
-            - name: FRONTEND_URL
-              value: "http://frontend-service:8000"
+        - name: backend
+          image: l00187746/wednesday-adventures-backend # backend image name
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: backend-config
+            - secretRef:
+                name: backend-secrets
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend-service
-  namespace: default
+  name: backend
 spec:
   selector:
     app: backend
@@ -36,4 +36,4 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000
-  type: ClusterIP  # If you want to expose it internally within the cluster
+  type: ClusterIP

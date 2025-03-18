@@ -9,7 +9,6 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     kubernetes.io/ingress.class: alb
 spec:
-  ingressClassName: alb
   rules:
   - http:
       paths:
@@ -17,6 +16,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: frontend-service
+            name: frontend
             port:
-              number: 8000
+              number: 80
