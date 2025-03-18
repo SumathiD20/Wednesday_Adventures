@@ -7,4 +7,5 @@ data:
   MONGO_ROOT_USER: "l00187746"
   MONGO_DB: "WednesdayAdventures"
   ADMIN_MAIL: "support@wednesdaysadventures.com"
+  PORT: "5000"
   FRONTEND_URL: "k8s-prod-frontend-02d00d641e-673647715.eu-west-1.elb.amazonaws.com"
