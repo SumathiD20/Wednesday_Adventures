@@ -4,7 +4,7 @@ metadata:
   name: backend-config
   namespace: prod
 data:
-  MONGO_ROOT_USER=l00187746
-  MONGO_DB=WednesdayAdventures
-  ADMIN_MAIL=support@wednesdaysadventures.com
-  FRONTEND_URL=http://localhost:8000
+  MONGO_ROOT_USER: "l00187746"
+  MONGO_DB: "WednesdayAdventures"
+  ADMIN_MAIL: "support@wednesdaysadventures.com"
+  FRONTEND_URL: http://localhost:80"
