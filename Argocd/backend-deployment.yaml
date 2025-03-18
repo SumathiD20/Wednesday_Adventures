@@ -24,6 +24,7 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secrets
+
 ---
 apiVersion: v1
 kind: Service
@@ -31,10 +32,10 @@ metadata:
   name: backend
   namespace: prod
 spec:
+  type: LoadBalancer
   selector:
     app: backend
   ports:
     - protocol: TCP
       port: 5000
       targetPort: 5000
-  type: ClusterIP
