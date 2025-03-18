@@ -12,7 +12,8 @@ RUN npm install
 
 # Copy the rest of the backend code (from the 'project-backend' directory)
 COPY project-backend/ .
-
+# ENV
+ENV FRONTEND_URL=k8s-prod-frontend-02d00d641e-1731524188.eu-west-1.elb.amazonaws.com:80
 # Expose the port the backend runs on
 EXPOSE 3000
 
