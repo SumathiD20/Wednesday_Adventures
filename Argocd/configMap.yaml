@@ -8,4 +8,3 @@ data:
   MONGO_DB: "WednesdayAdventures"
   ADMIN_MAIL: "support@wednesdaysadventures.com"
   PORT: "5000"
-  FRONTEND_URL: "k8s-prod-frontend-02d00d641e-1731524188.eu-west-1.elb.amazonaws.com"
