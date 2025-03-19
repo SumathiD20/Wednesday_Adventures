@@ -15,8 +15,8 @@
 
   // MongoDB connection
   require('./db/connection');
-
-  app.use(cors({ credentials: true, origin: 'http://k8s-prod-frontend-02d00d641e-1731524188.eu-west-1.elb.amazonaws.com:80'}));
+// / CORS configuration
+  app.use(cors({ credentials: true, origin: '*'}));
   app.use(cookieParser());
   app.use(bodyParser.json());
   swaggerConfig(app);
