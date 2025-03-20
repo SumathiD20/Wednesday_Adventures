@@ -1,0 +1,51 @@
+name: Generate JSDoc Documentation
+
+on:
+  push:
+    branches:
+      - Sumathi-JSD0c-Main # Trigger on push to the main branch
+  pull_request:
+    branches:
+      - Sumathi-JSD0c-Main # Trigger on pull requests to the main branch
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Debug directory structure
+        run: |
+          echo "Backend directory structure:"
+          ls -R project-backend
+          echo "Frontend directory structure:"
+          ls -R frontend
+
+      - name: Install dependencies (Backend)
+        working-directory: ./project-backend
+        run: npm install
+
+      - name: Generate JSDoc (Backend)
+        working-directory: ./project-backend
+        run: npx jsdoc -c jsdoc.json --verbose
+
+      - name: Install dependencies (Frontend)
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Generate JSDoc (Frontend)
+        working-directory: ./frontend
+        run: npx jsdoc -c jsdoc.json --verbose
+
+      - name: Upload documentation as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jsdoc-documentation
+          path: |
+            project-backend/docs
+            frontend/docs

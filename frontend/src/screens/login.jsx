@@ -3,14 +3,37 @@ import { Button, Form, Input, notification, Tabs } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import backgroundImage from '../assets/theme-park-portal-bg.jpg';
-import './login.css'
+import './login.css';
 
+/**
+ * Login component for both User and Admin login functionality.
+ * Displays a login form that switches between User and Admin tabs.
+ * Handles authentication through API requests and displays notifications.
+ * 
+ * @component
+ * @example
+ * return (
+ *   <Login />
+ * )
+ */
 function Login() {
 
+    /** @type {function} navigateToPage - Redirects user to a different page using react-router. */
     const navigateToPage = useNavigate()
+
+    /** @type {boolean} loading - A state to manage the loading status of the login form. */
     const [loading, setLoading] = useState(false);
+
+    /** @type {string} activeTab - A state to manage the active tab between "User" and "Admin". */
     const [activeTab, setActiveTab] = useState("User");
 
+    /**
+     * Handles the user login process.
+     * Sends a POST request with the user's email and password, then redirects on success.
+     * Displays notifications based on success or failure.
+     * 
+     * @param {Object} values - The login form values (email and password).
+     */
     const handleUserLogin = async (values) => {
         console.log("values", values)
         setLoading(true);
@@ -20,6 +43,8 @@ function Login() {
                 email: values.email,
                 password: values.password,
             }, { withCredentials: true });
+
+            console.log("Response", response)
 
             // Show success notification
             notification.success({
@@ -45,6 +70,13 @@ function Login() {
         }
     };
 
+    /**
+     * Handles the admin login process.
+     * Sends a POST request with the admin's email and password, then redirects on success.
+     * Displays notifications based on success or failure.
+     * 
+     * @param {Object} values - The login form values (email and password).
+     */
     const handleAdminLogin = async (values) => {
         console.log("values", values)
         setLoading(true);
@@ -130,7 +162,6 @@ function Login() {
                                 { required: true, message: 'Please enter your password!' },
                             ]}
                             style={{ marginBottom: "16px", minHeight: "64px" }}
-
                         >
                             <Input.Password
                                 placeholder="Enter your Password"
@@ -141,7 +172,7 @@ function Login() {
                         <span style={{ fontSize: "20px" }}><Link to={"/forgotPassword"}>Forgot Password?</Link></span>
                         <div style={{ height: "40px" }} />
                         <Form.Item>
-                            <Button color="default" variant="solid" style={{ width: "100%", height: "5vh" }} size="large" loading={loading} htmlType="submit">
+                            <Button type="primary" style={{ width: "100%", height: "5vh" }} size="large" loading={loading} htmlType="submit">
                                 Log in
                             </Button>
                         </Form.Item>
@@ -178,7 +209,6 @@ function Login() {
                                 { required: true, message: 'Please enter your password!' },
                             ]}
                             style={{ marginBottom: "16px", minHeight: "64px" }}
-
                         >
                             <Input.Password
                                 placeholder="Enter your Password"
@@ -189,7 +219,7 @@ function Login() {
                         <span style={{ fontSize: "20px" }}><Link to={"/forgotPassword"}>Forgot Password?</Link></span>
                         <div style={{ height: "40px" }} />
                         <Form.Item>
-                            <Button color="default" variant="solid" style={{ width: "100%", height: "5vh" }} size="large" loading={loading} htmlType="submit">
+                            <Button type="primary" style={{ width: "100%", height: "5vh" }} size="large" loading={loading} htmlType="submit">
                                 Log in
                             </Button>
                         </Form.Item>
@@ -201,7 +231,6 @@ function Login() {
                 )}
             </div>
         </div>
-
     )
 }
 

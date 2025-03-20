@@ -1,11 +1,13 @@
 const Booking = require("../model/Booking");
+const adminMail = process.env.ADMIN_MAIL;
+
 /**
- * Processes and returns a structured list of bookings.
- * 
- * @param {Object} params - Object containing the bookings array.
- * @param {Array} params.bookings - List of bookings from the database.
- * @returns {Array} - Returns an array of formatted booking details.
+ * Extracts and formats booking list data.
+ * @function getBookingList
+ * @param {Object} bookings - List of booking objects.
+ * @returns {Array<Object>} - Formatted booking list.
  */
+
 //booking list function
 const getBookingList = ({ bookings }) => {
 
@@ -32,17 +34,15 @@ const getBookingList = ({ bookings }) => {
 }
 
 /**
- * Handles ticket booking requests.
- * 
+ * Handles admin ticket booking.
  * @async
- * @function BookTicketController
+ * @function AdminBookTicketController
  * @param {Object} req - Express request object.
  * @param {Object} res - Express response object.
- * @returns {void}
+ * @returns {Promise<void>}
  */
 
-
-async function BookTicketController(req, res) {
+async function AdminBookTicketController(req, res) {
 
     const { userDetails, selectedAdventures } = req.body;
 
@@ -55,7 +55,7 @@ async function BookTicketController(req, res) {
     }
 
     const totalbooking = await Booking.countDocuments({}, { hint: "_id_" });
-    const bookingnumber = "WWAP" + 7120 + totalbooking;
+    const bookingnumber = "WWA" + 10000 + totalbooking;
     const newBookingData = {
         ...userDetails,
         bookingnumber: bookingnumber,
@@ -68,6 +68,7 @@ async function BookTicketController(req, res) {
 
         const newBooking = new Booking(newBookingData);
         const response = await newBooking.save();
+
         res.status(201).json({ message: 'Booking successfully', bookingnumber: bookingnumber });
 
     } catch (error) {
@@ -76,28 +77,22 @@ async function BookTicketController(req, res) {
     }
 }
 
-/**
- * Retrieves user bookings based on email.
- * 
- * @async
- * @function MyBookingController
- * @param {Object} req - Express request object.
- * @param {Object} res - Express response object.
- * @returns {void}
- */
-
-async function MyBookingController(req, res) {
+async function AdminBookingsController(req, res) {
     const { email } = req.body;
 
     if(!email) {
         return res.status(422), res.json({message: "No booking for this Email"});
     }
 
+    if (email != adminMail) {
+        return res.status(400), res.json({ message: 'Unautherized' });
+    }
+
     try {
-        const bookings = await Booking.find({ email: email });
+        const bookings = await Booking.find();
 
         if (bookings.length === 0) {
-            return res.status(400), res.json({ message: 'No Booking with this email.' });
+            return res.status(400), res.json({ message: 'No Bookings yet' });
         }
 
         const bookingslist = getBookingList({ bookings });
@@ -110,4 +105,50 @@ async function MyBookingController(req, res) {
     }
 }
 
-module.exports = { BookTicketController, MyBookingController };
+async function AdminEditTicketController(req, res) {
+    const { user, booking } = req.body;
+
+    if (!user.name || !user.email || !user.address || !user.contact) {
+        return res.status(400), res.json({ message: 'Please fill all fields' });
+    }
+
+    if (user.adult === 0 && user.children === 0) {
+        return res.status(400), res.json({ message: 'Select atleast one Visitor' });
+    }
+    try {
+        const bookingpre = await Booking.findOne({ bookingnumber: booking.bookingnumber });
+        bookingpre.name = user.name;
+        bookingpre.email = user.email;
+        bookingpre.contact = user.contact;
+        bookingpre.address = user.address;
+        bookingpre.date = user.date;
+        bookingpre.adult = user.adult;
+        bookingpre.children = user.children;
+        await bookingpre.save();
+
+        res.status(200).json({ message: "Booking Update Successful" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+async function AdminDeleteBookingController(req, res) {
+    const { booking } = req.body;
+
+    try {
+        const bookingpre = await Booking.findOne({ bookingnumber: booking.bookingnumber });
+        bookingpre.adventures[booking.park] = bookingpre.adventures[booking.park].filter((a) => a !== booking.adventure);
+
+        await bookingpre.save();
+
+        res.status(200).json({ message: "Booking Delete Successful" });
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+
+}
+
+module.exports = { AdminBookTicketController, AdminBookingsController, AdminEditTicketController, AdminDeleteBookingController }

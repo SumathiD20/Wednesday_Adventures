@@ -4,11 +4,46 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import backgroundImage from '../assets/theme-park-portal-bg.jpg';
 import "./user_register.css";
+/**
+ * UserRegister component for handling user and admin registration.
+ * This component allows users and admins to register by filling in their details.
+ * The registration form also ensures that passwords match before submitting the form.
+ *
+ * @component
+ * @example
+ * return <UserRegister />
+ */
 
 function UserRegister() {
+   /**
+   * The loading state controls the display of a loading spinner during API requests.
+   * 
+   * @type {boolean}
+   */
   const [loading, setLoading] = useState(false);
+   /**
+   * The activeTab state controls which registration form (User or Admin) is displayed.
+   * 
+   * @type {string}
+   */
   const [activeTab, setActiveTab] = useState("User");
+   /**
+   * The navigateToPage function is used to navigate to different pages after a successful registration.
+   * 
+   * @function
+   */
   const navigateToPage = useNavigate();
+  /**
+   * Handles user registration by sending a POST request to the backend.
+   * It validates that the passwords match before submitting the form data.
+   * 
+   * @param {Object} values - The form values from the registration form.
+   * @param {string} values.firstname - The user's first name.
+   * @param {string} values.lastname - The user's last name.
+   * @param {string} values.email - The user's email address.
+   * @param {string} values.password - The user's password.
+   * @param {string} values.cpassword - The user's confirm password.
+   */
 
   const handleUserRegister = async (values) => {
     setLoading(true);
@@ -53,6 +88,17 @@ function UserRegister() {
       setLoading(false);
     }
   };
+  /**
+   * Handles admin registration by sending a POST request to the backend.
+   * It validates that the passwords match before submitting the form data.
+   * 
+   * @param {Object} values - The form values from the registration form.
+   * @param {string} values.firstname - The admin's first name.
+   * @param {string} values.lastname - The admin's last name.
+   * @param {string} values.email - The admin's email address.
+   * @param {string} values.password - The admin's password.
+   * @param {string} values.cpassword - The admin's confirm password.
+   */
 
   const handleAdminRegister = async (values) => {
     setLoading(true);

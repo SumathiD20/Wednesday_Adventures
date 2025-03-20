@@ -3,9 +3,22 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+/**
+ * User schema for MongoDB using Mongoose.
+ * Represents a registered user in the system.
+ *
+ * @typedef {Object} UserSchema
+ * @property {string} firstname - User's first name (required).
+ * @property {string} lastname - User's last name (required).
+ * @property {string} email - User's unique email (required).
+ * @property {string} password - Hashed password (required).
+ * @property {Date} date - Account creation date (default: current date).
+ * @property {Array<Object>} tokens - Array of authentication tokens.
+ */
+
 const userSchema = new mongoose.Schema({
-  Firstname: { type: String, required: true },
-  Lastname: { type: String, required: true },
+  firstname: { type: String, required: true },
+  lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   date: { type: Date, default: Date.now },
@@ -13,6 +26,14 @@ const userSchema = new mongoose.Schema({
     token: { type: String, required: true},
   }],
 });
+
+/**
+ * Middleware: Hash the password before saving the user to the database.
+ * 
+ * @function
+ * @async
+ * @param {Function} next - Express middleware next function.
+ */
 
 userSchema.pre('save', async function(next) {
   if (this.isModified('password')) {

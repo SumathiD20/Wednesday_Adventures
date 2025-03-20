@@ -6,7 +6,12 @@ import UserRegister from './screens/user_register';
 import ForgotPassword from './screens/forgot_password';
 import Errorpage from './screens/error_page';
 import HomePage from './screens/homepage';
-
+import CartPage from './screens/cart_page';
+/**
+ * The main App component that defines routes for the application.
+ * 
+ * @returns {JSX.Element} The rendered App component with routing.
+ */
 
 function App() {
   return (
@@ -19,6 +24,7 @@ function App() {
           <Route path="/userRegister" element={<UserRegister />} />
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/errorland" element={<Errorpage/>} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
       </Router>
     </div>

@@ -1,0 +1,24 @@
+name: Load Test with JMeter
+on:
+  push:
+    branches:
+      - Sumathi-JSD0c-Main
+  pull_request:
+    branches:
+      - main
+      - Sumathi-JSD0c-Main
+jobs:
+  load-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install JMeter
+        run: |
+          sudo apt update
+          sudo apt install jmeter -y
+
+      - name: Run JMeter Tests
+        run: |
+          jmeter -n -t tests/api_test.jmx -l results.jtl
