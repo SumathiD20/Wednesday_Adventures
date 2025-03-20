@@ -24,7 +24,8 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secrets
-      nodeName: staging
+      nodeSelector:
+         nodegroup-role: worker-staging
 
 ---
 apiVersion: v1
