@@ -1,0 +1,8 @@
+resources:
+  - alb-ingress.yaml
+  - frontend-deployment.yaml
+  - ConfigMap.yaml
+  - backend-deployment.yaml
+  - secrets.yaml
+  - namespaces.yaml
+  - git-creds.yaml

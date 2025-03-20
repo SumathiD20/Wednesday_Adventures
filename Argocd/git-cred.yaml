@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-creds
+  namespace: argocd
+type: Opaque
+data:
+  username: "SumathiD20"
+  password: ""

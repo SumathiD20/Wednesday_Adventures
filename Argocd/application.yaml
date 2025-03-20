@@ -2,6 +2,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: |
+     l00187746/wednesday-adventures-frontend:v1.0.x
+     l00187746/wednesday-adventures-backend:v1.0.x
+    argocd-image-updater.argoproj.io/backend-image.update-strategy: semver
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
   name: wednesday-adventures
   namespace: argocd
   finalizers:
@@ -12,5 +18,9 @@ spec:
     repoURL: https://github.com/SumathiD20/Wednesday_Adventures.git
     targetRevision: feature-architecture
     path: Argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
   destination:
     server: https://kubernetes.default.svc
