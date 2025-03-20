@@ -11,12 +11,13 @@ metadata:
     kubernetes.io/ingress.class: alb
 spec:
   rules:
-  - http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend
-            port:
-              number: 80
+    - host: prod.wednesdayadventures.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+            service:
+              name: frontend
+              port:
+                number: 80
