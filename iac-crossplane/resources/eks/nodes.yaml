@@ -10,7 +10,7 @@ spec:
     capacityType: ON_DEMAND
     instanceTypes: ["t3.large"]
     labels:
-      nodegroup-role: worker-prod
+      nodegroup-role: worker-staging
     nodeRoleArnRef:
       name: dev-demo-eks-nodes
     region: eu-west-1

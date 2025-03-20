@@ -24,6 +24,8 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secrets
+      nodeSelector:
+         nodegroup-role: worker-prod
 
 ---
 apiVersion: v1
