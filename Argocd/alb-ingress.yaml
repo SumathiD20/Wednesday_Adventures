@@ -9,9 +9,13 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:476114128026:certificate/d8153eb0-29fb-4bcd-8451-392bdad2b8d5
+
 spec:
   rules:
-    - http:
+    - host: prod.wednesdaysadventures.me
+      http:
         paths:
           - path: /
             pathType: Prefix
@@ -20,3 +24,6 @@ spec:
                 name: frontend
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - prod.wednesdaysadventures.me

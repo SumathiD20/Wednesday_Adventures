@@ -4,8 +4,8 @@ kind: Application
 metadata:
   annotations:
     argocd-image-updater.argoproj.io/image-list: |
-     l00187746/frontend:v1.x.x
-     l00187746/backend:v1.x.x
+     frontend=l00187746/frontend:v1.1.x
+     backend=l00187746/backend:v1.1.x
     argocd-image-updater.argoproj.io/frontend.update-strategy: semver
     argocd-image-updater.argoproj.io/backend.update-strategy: semver
     argocd-image-updater.argoproj.io/frontend.write-back-method: git:secret:argocd/git-creds
