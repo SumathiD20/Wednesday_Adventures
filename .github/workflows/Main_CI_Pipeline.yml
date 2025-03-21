@@ -18,14 +18,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Build Backend Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:v1.0.0 -f Dockerfile.backend .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:v1.1.0 -f Dockerfile.backend .
       - name: Build Frontend Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:v1.0.0 -f Dockerfile.frontend .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:v1.1.0 -f Dockerfile.frontend .
       - name: Push Docker Images
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push ${{ secrets.DOCKER_USERNAME }}/backend:v1.0.0
-          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:v1.0.0
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend:v1.1.0
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:v1.1.0
 
   sbom_scan:
     runs-on: ubuntu-latest
