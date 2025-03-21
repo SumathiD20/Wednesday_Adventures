@@ -1,7 +1,7 @@
 resources:
   - alb-ingress.yaml
   - frontend-deployment.yaml
-  - ConfigMap.yaml
+  - configMap.yaml
   - backend-deployment.yaml
   - secrets.yaml
   - namespaces.yaml
