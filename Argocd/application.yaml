@@ -6,8 +6,10 @@ metadata:
     argocd-image-updater.argoproj.io/image-list: |
      l00187746/frontend:v1.x.x
      l00187746/backend:v1.x.x
-    argocd-image-updater.argoproj.io/backend-image.update-strategy: semver
-    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/frontend.update-strategy: semver
+    argocd-image-updater.argoproj.io/backend.update-strategy: semver
+    argocd-image-updater.argoproj.io/frontend.write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/backend.write-back-method: git:secret:argocd/git-creds
   name: wednesday-adventures
   namespace: argocd
   finalizers:
