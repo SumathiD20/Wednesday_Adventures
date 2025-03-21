@@ -31,13 +31,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
   namespace: prod
+  name: backend
 spec:
-  type: LoadBalancer
   selector:
-    app: backend
+    app: backend  # Match the labels of your backend pods
   ports:
     - protocol: TCP
-      port: 5000
-      targetPort: 5000
+      port: 5000  # Port exposed by the Service
+      targetPort: 5000  # Port on which the backend app is running
+  type: ClusterIP  # Internal service (not exposed externally)
