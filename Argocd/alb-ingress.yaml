@@ -11,7 +11,6 @@ metadata:
     kubernetes.io/ingress.class: alb
 spec:
   rules:
-    - host: prod.wednesdayadventures.com
       http:
         paths:
           - path: /
