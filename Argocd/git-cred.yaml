@@ -5,6 +5,6 @@ metadata:
   name: git-creds
   namespace: argocd
 type: Opaque
-data:
+stringData:
   username: "SumathiD20"
-  password: "Z2hwX21YMXNqcU9SQm54MjJ4UW1ET1hNODhhZ3M1ZFcyajBSME1qTw=="
+  password: "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"
