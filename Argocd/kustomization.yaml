@@ -5,4 +5,4 @@ resources:
   - backend-deployment.yaml
   - secrets.yaml
   - namespaces.yaml
-  - git-creds.yaml
+  - git-cred.yaml
