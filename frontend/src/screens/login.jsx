@@ -19,7 +19,9 @@ function Login() {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            }, { withCredentials: true });
+            });
+
+            console.log("Response", response)
 
             // Show success notification
             notification.success({
@@ -53,7 +55,7 @@ function Login() {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            }, { withCredentials: true });
+            });
 
             // Show success notification
             notification.success({

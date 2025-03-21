@@ -1,0 +1,21 @@
+# Stage 1: Build the backend
+FROM node:18.19.1 as backend-builder
+
+# Set the working directory for the backend
+WORKDIR /app/project-backend
+
+# Copy backend package.json and package-lock.json into the container
+COPY project-backend/package.json project-backend/package-lock.json ./
+
+# Install backend dependencies
+RUN npm install
+
+# Copy the rest of the backend code (from the 'project-backend' directory)
+COPY project-backend/ .
+# ENV
+ENV FRONTEND_URL=http://k8s-prod-frontend-02d00d641e-1731524188.eu-west-1.elb.amazonaws.com:80
+# Expose the port the backend runs on
+EXPOSE 3000
+
+# Command to run the backend server
+CMD ["node", "index.js"]
