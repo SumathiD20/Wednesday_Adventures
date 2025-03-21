@@ -41,7 +41,7 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:476114128026:certificate/d8153eb0-29fb-4bcd-8451-392bdad2b8d5  # SSL certificate ARN
 spec:
   rules:
-    - host: api.wednesdayadventures.me  # Backend domain
+    - host: wednesdayadventures.me  # Backend domain
       http:
         paths:
           - path: /  # Root path
@@ -53,4 +53,4 @@ spec:
                   number: 5000  # Backend Service port
   tls:
     - hosts:
-        - api.wednesdayadventures.me  # Backend domain
+        - wednesdayadventures.me  # Backend domain
