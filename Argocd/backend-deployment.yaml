@@ -17,6 +17,7 @@ spec:
       containers:
         - name: backend
           image: l00187746/backend:latest # backend image name
+          imagePullPolicy: Always  # Ensures Kubernetes always pulls the latest image
           ports:
             - containerPort: 5000
           envFrom:
