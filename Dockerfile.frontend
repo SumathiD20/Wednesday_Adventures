@@ -14,7 +14,7 @@ RUN npm install
 COPY frontend/ .
 
 #env
-ENV REACT_APP_ENV_ENDPOINT=http://a595c6a27b9e64b8689b273f565d7b12-2128934366.eu-west-1.elb.amazonaws.com:5000
+ENV REACT_APP_ENV_ENDPOINT=https://wednesdayadventures.me
 
 # Build the frontend
 RUN npm run build
