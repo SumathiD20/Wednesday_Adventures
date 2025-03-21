@@ -14,7 +14,7 @@ spec:
       name: main-vpc-eks
     tags:
       Name: private-subnet-1-eks
-      kubernetes.io/role/internal-elb: "1"
+      kubernetes.io/role/elb: "1"
       kubernetes.io/cluster/wednesday-adventures: "owned"
 
 ---
@@ -33,7 +33,7 @@ spec:
       name: main-vpc-eks
     tags:
       Name: private-subnet-2-eks
-      kubernetes.io/role/internal-elb: "1"
+      kubernetes.io/role/elb: "1"
       kubernetes.io/cluster/wednesday-adventures: "owned"
 
 ---
