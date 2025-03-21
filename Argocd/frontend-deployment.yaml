@@ -21,7 +21,7 @@ spec:
             - containerPort: 80
           env:
             - name: REACT_APP_ENV_ENDPOINT
-              value: "http://ab66537699d63433b9eca08c909f3481-1803609063.eu-west-1.elb.amazonaws.com:5000"  # backend service name
+              value: "a595c6a27b9e64b8689b273f565d7b12-2128934366.eu-west-1.elb.amazonaws.com:5000"  # backend service name
       nodeSelector:
          nodegroup-role: worker-prod
 
