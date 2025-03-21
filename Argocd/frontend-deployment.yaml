@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: l00187746/wednesday-adventures-frontend:v1.0.0  # frontend image
+          image: l00187746/frontend:v1.0.0  # frontend image
           ports:
             - containerPort: 80
           env:
