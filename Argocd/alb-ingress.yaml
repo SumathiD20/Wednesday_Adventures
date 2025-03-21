@@ -14,7 +14,7 @@ metadata:
 
 spec:
   rules:
-    - host: prod.wednesdaysadventures.me
+    - host: www.wednesdaysadventures.me
       http:
         paths:
           - path: /
@@ -26,4 +26,4 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - prod.wednesdaysadventures.me
+        - www.wednesdaysadventures.me
