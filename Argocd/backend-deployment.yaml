@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: l00187746/backend:v1.0.0 # backend image name
+          image: l00187746/backend:v1.1.0 # backend image name
           ports:
             - containerPort: 5000
           envFrom:
