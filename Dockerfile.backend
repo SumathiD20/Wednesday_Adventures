@@ -10,7 +10,7 @@ COPY project-backend/package.json project-backend/package-lock.json ./
 # Install backend dependencies
 RUN npm install
 
-# Copy the rest of the backend code (from the 'project-backend' directory)
+# Copy the rest of the backend code (from the ' project-backend ' directory)
 COPY project-backend/ .
 
 #env
