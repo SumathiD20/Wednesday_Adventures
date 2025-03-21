@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: l00187746/wednesday-adventures-backend:latest # backend image name
+          image: l00187746/wednesday-adventures-backend:v1.0.0 # backend image name
           ports:
             - containerPort: 5000
           envFrom:
