@@ -4,8 +4,8 @@ kind: Application
 metadata:
   annotations:
     argocd-image-updater.argoproj.io/image-list: |
-     l00187746/frontend:v1.0.x
-     l00187746/backend:v1.0.x
+     l00187746/frontend:v1.x.x
+     l00187746/backend:v1.x.x
     argocd-image-updater.argoproj.io/backend-image.update-strategy: semver
     argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/git-creds
   name: wednesday-adventures
