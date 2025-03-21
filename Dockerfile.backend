@@ -14,7 +14,7 @@ RUN npm install
 COPY project-backend/ .
 
 #env
-ENV FRONTEND_URL=http://k8s-prod-frontend-02d00d641e-1294408721.eu-west-1.elb.amazonaws.com
+ENV FRONTEND_URL=https://www.wednesdayadventures.me
 
 # Expose the port the backend runs on
 EXPOSE 3000
