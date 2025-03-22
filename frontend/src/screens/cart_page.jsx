@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker } from 'antd';
+import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker, Checkbox } from 'antd';
 import { Link } from 'react-router-dom';
 import useCartStore from '../store/store_cart_items';
 import useBookingStore from '../store/store_booking';
-import { HomeOutlined, UserOutlined, ShoppingCartOutlined } from '@ant-design/icons';
+import { HomeOutlined, UserOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
 import logoImage from "../assets/waLogo.jpeg";
 import { loadStripe } from '@stripe/stripe-js';
 
 const stripePromise = loadStripe('pk_test_51QvPj5H0mEi2gjEIoypsFkdjuyAAbdqpInM77jN9kftEhsHkNje7mBvPByYXkFrd3M4oQWKgq9EpmF2cshE158rS00x3z5Jf45');
 
 const { Header, Content } = Layout;
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 const { Item } = Form;
 const { TextArea } = Input;
 
@@ -20,15 +20,57 @@ function CartPage() {
     const [form] = Form.useForm();
     const [showBookingForm, setShowBookingForm] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
 
     // Show/hide form modal
     const showFormModal = () => setShowBookingForm(true);
     const hideFormModal = () => setShowBookingForm(false);
 
+    // Show/hide terms and conditions modal
+    const showTermsModal = () => setIsModalVisible(true);
+    const hideTermsModal = () => setIsModalVisible(false);
+
+    // Terms and Conditions content
+    const termsAndConditionsContent = `
+        <h2>Terms and Conditions for Ticket Booking</h2>
+        <p><strong>Effective Date:</strong> [Insert Date]</p>
+
+        <h3>1. Acceptance of Terms</h3>
+        <p>By booking tickets on our platform, you acknowledge that you have read, understood, and agreed to these Terms and Conditions.</p>
+
+        <h3>2. Ticket Booking</h3>
+        <p><strong>Booking Process:</strong> Tickets for rides and attractions can be booked through our platform. All bookings are subject to availability.</p>
+        <p><strong>Payment:</strong> We accept payments through supported payment methods as indicated on the platform.</p>
+        <p><strong>Refunds and Cancellations:</strong> Refunds are subject to our <strong>Refund Policy</strong>, which is available on our website.</p>
+        <p><strong>Ticket Usage:</strong> Tickets are non-transferable and valid only for the date and time specified during booking.</p>
+
+        <h3>3. Liability and Disclaimers</h3>
+        <p><strong>Ride Safety:</strong> Some rides and attractions may involve physical activity or elements of risk. Participants must assess their own physical condition and ability before engaging in such activities.</p>
+        <p><strong>Platform Accuracy:</strong> While we strive to provide accurate information, we do not guarantee the completeness or reliability of the content on our platform.</p>
+        <p><strong>Limitation of Liability:</strong> To the fullest extent permitted by law, <strong>Wednesday's Wicked Adventures</strong> shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from your use of the platform or participation in park activities.</p>
+
+        <h3>4. Governing Law</h3>
+        <p>These Terms and Conditions are governed by and construed in accordance with the laws of Ireland. Any disputes arising out of or in connection with these terms shall be subject to the exclusive jurisdiction of the Courts of Ireland.</p>
+
+        <h3>5. Contact Us</h3>
+        <p>If you have any questions or concerns regarding these Terms and Conditions, please contact our support team at:</p>
+        <p><strong>Email:</strong> support@wednesdayswickedadventures.com</p>
+    `;
+
     // Handle form submission
     const handleFormSubmit = async (values) => {
         setIsProcessing(true);
         try {
+            // Ensure the user agrees to the terms and conditions
+            if (!values.agreeToTerms) {
+                notification.error({
+                    message: 'Terms and Conditions',
+                    description: 'You must agree to the terms and conditions to proceed.',
+                    placement: 'topRight',
+                });
+                return;
+            }
+
             // 1. Save booking details to store
             const bookingData = {
                 ...values,
@@ -217,6 +259,25 @@ function CartPage() {
                 >
                     <InputNumber min={0} style={{ width: '100%' }} />
                 </Item>
+
+                {/* Terms and Conditions Checkbox */}
+                <Item
+                    name="agreeToTerms"
+                    valuePropName="checked"
+                    rules={[
+                        {
+                            validator: (_, value) =>
+                                value ? Promise.resolve() : Promise.reject(new Error('You must agree to the terms and conditions')),
+                        },
+                    ]}
+                >
+                    <Checkbox>
+                        I agree to the{" "}
+                        <Text type="link" onClick={showTermsModal} style={{ color: "#1890ff" }}>
+                            Terms and Conditions
+                        </Text>
+                    </Checkbox>
+                </Item>
             </Form>
         </Modal>
     );
@@ -233,6 +294,28 @@ function CartPage() {
     return (
         <Layout>
             <BookingFormModal />
+            {/* Terms and Conditions Modal */}
+            <Modal
+                title="Terms and Conditions"
+                open={isModalVisible}
+                onCancel={hideTermsModal}
+                footer={[
+                    <Button key="close" onClick={hideTermsModal}>
+                        Close
+                    </Button>,
+                ]}
+                width="70%"
+            >
+                <div
+                    style={{
+                        maxHeight: "60vh",
+                        overflowY: "auto",
+                        padding: "0 16px",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: termsAndConditionsContent }}
+                />
+            </Modal>
+
             <Header
                 style={{
                     display: 'flex',
@@ -270,6 +353,14 @@ function CartPage() {
                     </Link>
                     <Link to="/about">
                         <Button icon={<UserOutlined />}>About</Button>
+                    </Link>
+                    <Link to="/userBookedRides">
+                        <Button icon={<UserOutlined />}>My Rides</Button>
+                    </Link>
+                    <Link to="/">
+                        <Button type="primary" style={{ backgroundColor: "red" }} icon={<LogoutOutlined />}>
+                            Logout
+                        </Button>
                     </Link>
                 </Flex>
             </Header>

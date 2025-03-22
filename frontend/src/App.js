@@ -12,6 +12,7 @@ import DarkwoodPage from './screens/ride descriptions/darkwood';
 import WickedWheelPage from './screens/ride descriptions/wicked_wheel';
 import WaterAmazePage from './screens/ride descriptions/water_amaze';
 import ThrillChillParkPage from './screens/ride descriptions/thrill_chill_park';
+import UserBookedList from './screens/user_booked_list';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/wickedWheelDetail" element={<WickedWheelPage />} />
           <Route path="/waterAmazeDetail" element={<WaterAmazePage />} />
           <Route path="/thrillChillParkDetail" element={<ThrillChillParkPage />} />
+          <Route path="/userBookedRides" element={<UserBookedList />} />
         </Routes>
       </Router>
     </div>

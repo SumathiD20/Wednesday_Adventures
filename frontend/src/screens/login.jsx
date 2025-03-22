@@ -3,25 +3,29 @@ import { Button, Form, Input, notification, Tabs } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import backgroundImage from '../assets/theme-park-portal-bg.jpg';
-import './login.css'
+import './login.css';
+import useUserStore from '../store/store_user'; // Import the Zustand store
 
 function Login() {
-
-    const navigateToPage = useNavigate()
+    const navigateToPage = useNavigate();
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("User");
+    const setEmail = useUserStore((state) => state.setEmail); // Get the setEmail action from the store
 
     const handleUserLogin = async (values) => {
-        console.log("values", values)
+        console.log("values", values);
         setLoading(true);
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            });
+            }, { withCredentials: true });
 
-            console.log("Response", response)
+            console.log("Response", response);
+
+            // Store the email in Zustand store
+            useUserStore.getState().setEmail(values.email); 
 
             // Show success notification
             notification.success({
@@ -31,7 +35,7 @@ function Login() {
             });
 
             // Redirect to Home page after successful login
-            navigateToPage("/homepage")
+            navigateToPage("/homepage");
 
         } catch (error) {
             console.error(error);
@@ -48,14 +52,17 @@ function Login() {
     };
 
     const handleAdminLogin = async (values) => {
-        console.log("values", values)
+        console.log("values", values);
         setLoading(true);
 
         try {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            });
+            }, { withCredentials: true });
+
+            // Store the email in Zustand store
+            useUserStore.getState().setEmail(values.email); 
 
             // Show success notification
             notification.success({
@@ -65,7 +72,7 @@ function Login() {
             });
 
             // Redirect to Home page after successful login
-            navigateToPage("/homepage")
+            navigateToPage("/homepage");
 
         } catch (error) {
             console.error(error);
@@ -203,8 +210,7 @@ function Login() {
                 )}
             </div>
         </div>
-
-    )
+    );
 }
 
 export default Login;

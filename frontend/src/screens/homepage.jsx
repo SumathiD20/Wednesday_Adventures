@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import { Layout, Card, Row, Col, Button, Image, Flex, notification } from 'antd';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { Layout, Card, Row, Col, Button, Image, Flex, notification, Modal, Spin } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-    HomeOutlined,
     UserOutlined,
     ShoppingCartOutlined,
-    InfoCircleOutlined
+    InfoCircleOutlined,
+    LogoutOutlined
 } from '@ant-design/icons';
 import logoImage from "../assets/waLogo.jpeg"
 import welcomeImage from "../assets/wawelcomeimage.png"
@@ -19,7 +19,6 @@ import axios from 'axios';
 
 const { Header, Content } = Layout;
 
-// Sample product data
 const products = [
     {
         id: 1,
@@ -67,16 +66,22 @@ function HomePage() {
     const addToCart = useCartStore((state) => state.addToCart);
     const cart = useCartStore((state) => state.cart);
     const clearCart = useCartStore((state) => state.clearCart);
-    
+    const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        console.log("log in another useeffect", cart.length)
+    }, [])
+
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
-    
+
         if (queryParams.get('fromStripe') === 'true') {
-            // Retrieve bookingDetails and paymentId from localStorage
             const bookingDetails = JSON.parse(localStorage.getItem('bookingDetails'));
             const paymentId = localStorage.getItem('paymentId');
             const cart = JSON.parse(localStorage.getItem('preservedCart') || []);
-    
+
             if (!bookingDetails || !paymentId) {
                 notification.error({
                     message: 'Error',
@@ -85,19 +90,19 @@ function HomePage() {
                 });
                 return;
             }
-    
-            // Set bookingDetails and paymentId in Zustand store
+
             useBookingStore.getState().setBookingDetails(bookingDetails);
             useBookingStore.getState().setPaymentId(paymentId);
-    
-            // Show processing notification
+
             notification.info({
                 message: 'Booking Processing',
                 description: 'Your booking is being processed. Please wait...',
                 duration: 0,
                 key: 'processing-notification',
             });
-    
+
+            console.log("Cart items length", cart.length)
+
             const processBooking = async () => {
                 try {
                     const bookingResponse = await axios.post(
@@ -105,22 +110,22 @@ function HomePage() {
                         {
                             userDetails: bookingDetails,
                             selectedAdventures: cart.reduce((acc, item) => {
-                                acc[item.name] = [`tickets-${item.quantity}`]; // 
+                                acc[item.name] = [`tickets-${item.quantity}`];
                                 return acc;
                             }, {}),
-                            // paymentId,
                         }
                     );
-    
+
                     if (bookingResponse.status !== 201) {
                         throw new Error('Booking failed');
                     }
-    
+
                     notification.success({
                         message: 'Booking Successful!',
                         description: `Your booking number is: ${bookingResponse.data.bookingnumber}`,
                         duration: 4.5,
                     });
+                    clearCart();
                 } catch (error) {
                     console.error('Booking error:', error);
                     notification.error({
@@ -128,13 +133,13 @@ function HomePage() {
                         description: 'There was a problem with your booking. The transaction is being refunded.',
                         duration: 0,
                     });
-    
+
                     try {
                         await axios.post(
                             `${process.env.REACT_APP_API_ENDPOINT}/initiate-refund`,
                             { paymentId }
                         );
-    
+
                         notification.info({
                             message: 'Refund Initiated',
                             description: 'Your refund has been initiated. Please check your email for updates.',
@@ -148,24 +153,21 @@ function HomePage() {
                             duration: 0,
                         });
                     }
+                    clearCart();
                 } finally {
-                    // Cleanup
                     notification.destroy('processing-notification');
                     useBookingStore.getState().clearBookingDetails();
-                    clearCart();
                     localStorage.removeItem('preservedCart');
                     localStorage.removeItem('bookingDetails');
                     localStorage.removeItem('paymentId');
                     window.history.replaceState({}, document.title, '/homepage');
                 }
             };
-    
+
             processBooking();
         }
     }, [clearCart]);
-    
 
-    // Add this to handle browser back/forward navigation
     useEffect(() => {
         const handleNavigation = () => {
             const queryParams = new URLSearchParams(window.location.search);
@@ -178,9 +180,58 @@ function HomePage() {
         return () => window.removeEventListener('popstate', handleNavigation);
     }, []);
 
+    const handleLogout = async () => {
+        setIsLogoutModalVisible(true); // Show logout modal
+        setIsLoggingOut(true); // Start loading spinner
+
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/logout`);
+
+            if (response.status === 200 || response.status === 201) {
+                // Show success notification
+                notification.success({
+                    message: 'Logout Successful',
+                    description: 'You have been logged out successfully.',
+                    placement: 'topRight',
+                });
+
+                // Redirect to home page
+                navigate('/');
+            } else {
+                throw new Error('Logout failed');
+            }
+        } catch (error) {
+            // Show error notification
+            notification.error({
+                message: 'Logout Failed',
+                description: 'There was a problem logging out. Please try again.',
+                placement: 'topRight',
+            });
+        } finally {
+            setIsLoggingOut(false); 
+            setIsLogoutModalVisible(false); 
+        }
+    };
+
+    const LogoutModal = () => (
+        <Modal
+            title="Logging Out"
+            open={isLogoutModalVisible}
+            onCancel={() => setIsLogoutModalVisible(false)}
+            footer={null} 
+            closable={false} 
+            centered
+        >
+            <Flex justify="center" align="center" gap="middle">
+                <Spin size="large" /> 
+                <span>Logging you off...</span>
+            </Flex>
+        </Modal>
+    );
+
     return (
         <Layout>
-            {/* Top Navigation Bar */}
+            <LogoutModal />
             <Header
                 style={{
                     display: 'flex',
@@ -194,7 +245,6 @@ function HomePage() {
                     width: "100%"
                 }}
             >
-                {/* Logo */}
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img
                         src={logoImage}
@@ -205,23 +255,29 @@ function HomePage() {
                     <span style={{ fontSize: '18px', fontWeight: 'bold' }}>Wednesday Adventures</span>
                 </div>
 
-                {/* Breadcrumbs */}
                 <Flex gap="middle">
                     <Link to="/cart">
                         <Button type="primary" icon={<ShoppingCartOutlined />}>
                             Cart ({cart.length})
                         </Button>
                     </Link>
-                    <Link to="/homepage">
-                        <Button icon={<HomeOutlined />}>Home</Button>
-                    </Link>
                     <Link to="/about">
                         <Button icon={<UserOutlined />}>About</Button>
                     </Link>
+                    <Link to="/userBookedRides">
+                        <Button icon={<UserOutlined />}>My Rides</Button>
+                    </Link>
+                    <Button
+                        type="primary"
+                        style={{ backgroundColor: "red", marginTop: "15px" }}
+                        icon={<LogoutOutlined />}
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </Button>
                 </Flex>
             </Header>
 
-            {/* Main Content */}
             <Content style={{ padding: '20px' }}>
                 <div className="welcome-container" style={{
                     textAlign: 'center',
@@ -248,7 +304,6 @@ function HomePage() {
                         Your portal to a Wednesday-themed adventure park
                     </p>
                 </div>
-                {/* Large Banner Image */}
                 <div style={{ display: "Flex", justifyContent: "center" }}>
                     <Image
                         src={welcomeImage}
@@ -283,7 +338,6 @@ function HomePage() {
                     </p>
                 </div>
 
-                {/* Product Cards */}
                 <Row gutter={[16, 16]}
                     style={{
                         display: 'flex',
@@ -308,14 +362,14 @@ function HomePage() {
                                 cover={
                                     <div style={{
                                         position: 'relative',
-                                        flex: '0 0 250px' // Fixed image height
+                                        flex: '0 0 250px'
                                     }}>
                                         <img
                                             alt={product.displayName}
                                             src={product.image}
                                             style={{
                                                 width: '100%',
-                                                height: 200, // Changed from fixed 250px
+                                                height: 200,
                                                 objectFit: 'cover',
                                                 borderBottom: '1px solid #f0f0f0'
                                             }}
@@ -353,11 +407,11 @@ function HomePage() {
                                         }}>
                                             {product.displayName}
                                         </div>
-                                        <Link to={product.path}  onClick={() => window.scrollTo(0, 0)}>
-                                            <Button 
-                                                type="text" 
+                                        <Link to={product.path} onClick={() => window.scrollTo(0, 0)}>
+                                            <Button
+                                                type="text"
                                                 icon={<InfoCircleOutlined />}
-                                                style={{ 
+                                                style={{
                                                     color: '#1890ff',
                                                     marginLeft: '8px',
                                                     ':hover': {
