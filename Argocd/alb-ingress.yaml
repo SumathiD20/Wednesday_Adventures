@@ -16,7 +16,7 @@ spec:
     - host: www.wednesdaysadventures.me
       http:
         paths:
-          - path: /
+          - path: /homepage
             pathType: Prefix
             backend:
               service:
