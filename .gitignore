@@ -24,3 +24,8 @@ TestResults.xml
 Project-backend/node_modules
 
 aws-cred.txt 
+frontend/node_modules/
+Documentation/JSDoc/
+node_modules/
+project-backend/docs/
+frontend/docs/

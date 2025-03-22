@@ -1,0 +1,78 @@
+name: JMeter Performance Tests
+
+on:
+  push:
+    branches:
+      - WWA-Jmeter
+      - main
+
+jobs:
+
+  performance_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Download and install JMeter
+        run: |
+          wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.1.tgz
+          tar -xf apache-jmeter-5.4.1.tgz
+          export PATH=$PATH:$PWD/apache-jmeter-5.4.1/bin
+
+      - name: Create testplan.jmx
+        run: |
+          echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+          <jmeterTestPlan version=\"1.2\" properties=\"5.0\" jmeter=\"5.4.1\" xmlns=\"http://jakarta.apache.org/jmeter\">
+            <hashTree>
+              <TestPlan guiclass=\"TestPlanGui\" testclass=\"TestPlan\" testname=\"Test Plan\" enabled=\"true\">
+                <stringProp name=\"TestPlan.comments\"></stringProp>
+                <boolProp name=\"TestPlan.functional_mode\">false</boolProp>
+                <boolProp name=\"TestPlan.tearDown_on_shutdown\">true</boolProp>
+                <boolProp name=\"TestPlan.serialize_threadgroups\">false</boolProp>
+                <elementProp name=\"TestPlan.user_defined_variables\" elementType=\"Arguments\" guiclass=\"ArgumentsPanel\" testclass=\"Arguments\" testname=\"User Defined Variables\" enabled=\"true\">
+                  <collectionProp name=\"Arguments.arguments\">
+                    <elementProp name=\"FRONTEND_DOMAIN\" elementType=\"Argument\">
+                      <stringProp name=\"Argument.name\">FRONTEND_DOMAIN</stringProp>
+                      <stringProp name=\"Argument.value\">www.wednesdayadventures.me</stringProp>
+                      <stringProp name=\"Argument.metadata\">=</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </elementProp>
+                <stringProp name=\"TestPlan.user_define_classpath\"></stringProp>
+              </TestPlan>
+              <hashTree>
+                <ThreadGroup guiclass=\"ThreadGroupGui\" testclass=\"ThreadGroup\" testname=\"Thread Group\" enabled=\"true\">
+                  <stringProp name=\"ThreadGroup.on_sample_error\">continue</stringProp>
+                  <elementProp name=\"ThreadGroup.main_controller\" elementType=\"LoopController\" guiclass=\"LoopControlPanel\" testclass=\"LoopController\" testname=\"Loop Controller\" enabled=\"true\">
+                    <boolProp name=\"LoopController.continue_forever\">false</boolProp>
+                    <stringProp name=\"LoopController.loops\">1</stringProp>
+                  </elementProp>
+                  <stringProp name=\"ThreadGroup.num_threads\">10</stringProp>
+                  <stringProp name=\"ThreadGroup.ramp_time\">1</stringProp>
+                  <boolProp name=\"ThreadGroup.scheduler\">false</boolProp>
+                  <stringProp name=\"ThreadGroup.duration\"></stringProp>
+                  <stringProp name=\"ThreadGroup.delay\"></stringProp>
+                </ThreadGroup>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+          </jmeterTestPlan>" > testplan.jmx
+
+      - name: Move testplan.jmx to specific directory
+        run: |
+          mv testplan.jmx frontend/Jmeter_test_reports/
+          git config --global user.email "L00187746@atu.ie"
+          git config --global user.name "SumathiD20"
+          git add frontend/Jmeter_test_reports/testplan.jmx
+          git commit -m "test plan"
+          git push origin WWA-Jmeter
