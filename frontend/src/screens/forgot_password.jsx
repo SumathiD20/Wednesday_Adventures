@@ -27,7 +27,7 @@ function ForgotPassword() {
                 email: values.email,
                 password: values.password,
                 cpassword: values.cpassword,
-            }, { withCredentials: true });
+            });
 
             // Show success notification
             notification.success({
@@ -68,7 +68,7 @@ function ForgotPassword() {
                 email: values.email,
                 password: values.password,
                 cpassword: values.cpassword,
-            }, { withCredentials: true });
+            });
 
             // Show success notification
             notification.success({

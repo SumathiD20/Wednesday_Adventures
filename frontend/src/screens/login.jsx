@@ -10,7 +10,7 @@ function Login() {
     const navigateToPage = useNavigate();
     const [loading, setLoading] = useState(false);
     const [activeTab, setActiveTab] = useState("User");
-    const setEmail = useUserStore((state) => state.setEmail); // Get the setEmail action from the store
+    // const setEmail = useUserStore((state) => state.setEmail); // Get the setEmail action from the store
 
     const handleUserLogin = async (values) => {
         console.log("values", values);
@@ -20,7 +20,7 @@ function Login() {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            }, { withCredentials: true });
+            });
 
             console.log("Response", response);
 
@@ -59,7 +59,7 @@ function Login() {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            }, { withCredentials: true });
+            });
 
             // Store the email in Zustand store
             useUserStore.getState().setEmail(values.email); 
