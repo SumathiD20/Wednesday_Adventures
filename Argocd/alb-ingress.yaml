@@ -16,7 +16,7 @@ spec:
     - host: www.wednesdaysadventures.me
       http:
         paths:
-          - path: /homepage
+          - path: /
             pathType: Prefix
             backend:
               service:
@@ -50,13 +50,6 @@ spec:
                 name: backend  # Backend Service name
                 port:
                   number: 5000  # Backend Service port
-          - path: /webhooks/stripe
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 5000
   tls:
     - hosts:
         - wednesdayadventures.me  # Backend domain
