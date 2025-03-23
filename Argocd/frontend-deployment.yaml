@@ -20,6 +20,15 @@ spec:
           imagePullPolicy: Always  # Ensures Kubernetes always pulls the latest image
           ports:
             - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf  # This will mount the specific file from the ConfigMap
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-conf  # ConfigMap name that contains nginx.conf
+
       nodeSelector:
          nodegroup-role: worker-prod
 
