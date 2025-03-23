@@ -8,7 +8,6 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     kubernetes.io/ingress.class: alb
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     nginx.ingress.kubernetes.io/rewrite-target: /index.html
 spec:
   rules:
@@ -81,7 +80,6 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: alb  # Use the AWS Load Balancer Controller
     alb.ingress.kubernetes.io/scheme: internet-facing  # Internet-facing ALB
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'  # Listen on HTTPS
 spec:
   rules:
     - host: api.wednesdayadventures.me  # Backend domain
