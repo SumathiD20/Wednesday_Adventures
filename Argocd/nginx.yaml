@@ -7,61 +7,30 @@ data:
   nginx.conf: |
     # nginx.conf
 
-    # The events block should be outside the HTTP block
     events {
-        worker_connections 1024;  # This is the default and can be adjusted if needed
+        worker_connections 1024;
     }
 
-    # Main HTTP block
     http {
         include /etc/nginx/mime.types;
         default_type application/octet-stream;
 
-        # Server block for the application
         server {
             listen 80;
             server_name localhost;
 
-            # Define the root of your app
+            root /usr/share/nginx/html;
+
             location / {
-                root /usr/share/nginx/html;
-                index index.html index.htm;
+                try_files $uri $uri/ /index.html;
             }
 
-            # Additional configurations for your paths
-            location /homepage {
-                root /usr/share/nginx/html;
-                index index.html;
+            location /static/ {
+                try_files $uri =404;
             }
 
-            location /login {
-                root /usr/share/nginx/html;
-                index index.html;
-            }
-
-            location /userRegister {
-                root /usr/share/nginx/html;
-                index index.html;
-            }
-
-            location /forgotPassword {
-                root /usr/share/nginx/html;
-                index index.html;
-            }
-
-            location /errorland {
-                root /usr/share/nginx/html;
-                index index.html;
-            }
-
-            location /cart {
-                root /usr/share/nginx/html;
-                index index.html;
-            }
-
-            location /about {
-                root /usr/share/nginx/html;
-                index index.html;
+            location /assets/ {
+                try_files $uri =404;
             }
         }
     }
