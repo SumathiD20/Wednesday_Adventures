@@ -7,6 +7,10 @@ data:
   nginx.conf: |
     # nginx.conf
 
+    events {
+        worker_connections 1024;  # This is the default and can be adjusted if needed
+    }
+
     # Main HTTP block
     http {
         include /etc/nginx/mime.types;
