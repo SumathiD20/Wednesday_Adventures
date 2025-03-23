@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
     Layout,
@@ -22,11 +22,14 @@ import ourStory from '../assets/home-story.jpg';
 import ceo from '../assets/ceo.jpg';
 import leadDesigner from '../assets/lead-designer.jpg';
 import safetryDirector from '../assets/safety-director.jpg';
+import useAuth from '../hooks/use_jwt_auth';
 
 const { Content } = Layout;
 const { Title, Paragraph } = Typography;
 
 function AboutPage() {
+    useAuth();
+    
     const [historyModalVisible, setHistoryModalVisible] = useState(false);
 
     const historyContent = `
