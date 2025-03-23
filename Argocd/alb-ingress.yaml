@@ -10,7 +10,7 @@ metadata:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:476114128026:certificate/d8153eb0-29fb-4bcd-8451-392bdad2b8d5
-
+    nginx.ingress.kubernetes.io/rewrite-target: /index.html
 spec:
   rules:
     - host: www.wednesdaysadventures.me
