@@ -3,7 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   annotations:
-    argocd-image-updater.argoproj.io/image-list: frontend=l00187746/frontend:latest,backend=l00187746/backend:latest
+    argocd-image-updater.argoproj.io/image-list: frontend=l00187746/frontend:staging,backend=l00187746/backend:staging
     argocd-image-updater.argoproj.io/frontend.update-strategy: digest
     argocd-image-updater.argoproj.io/backend.update-strategy: digest
     argocd-image-updater.argoproj.io/frontend.write-back-method: git:secret:argocd/git-creds

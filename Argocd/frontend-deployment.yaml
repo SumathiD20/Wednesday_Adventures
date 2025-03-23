@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: l00187746/frontend:latest  # frontend image
+          image: l00187746/frontend:staging  # frontend image
           imagePullPolicy: Always  # Ensures Kubernetes always pulls the latest image
           ports:
             - containerPort: 80

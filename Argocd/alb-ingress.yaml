@@ -19,56 +19,56 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /login  # Login path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /homepage  # Homepage path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /userRegister  # User register path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /forgotPassword  # Forgot password path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /errorland  # Error land path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /cart  # Error land path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
           - path: /about  # Error land path
             pathType: Prefix
             backend:
               service:
-                name: frontend
+                name: frontend-staging
                 port:
                   number: 80
 
@@ -91,13 +91,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: backend  # Backend Service name
+                name: backend-staging  # Backend Service name
                 port:
                   number: 5000  # Backend Service port
           - path: /webhooks/stripe
             pathType: Prefix
             backend:
               service:
-                name: backend
+                name: backend-staging
                 port:
                   number: 5000
