@@ -7,12 +7,12 @@ data:
   nginx.conf: |
     # nginx.conf
 
-    events {
-        worker_connections 1024;  # This is the default and can be adjusted if needed
-    }
-
     # Main HTTP block
     http {
+        events {
+            worker_connections 1024;  # This is the default and can be adjusted if needed
+        }
+
         include /etc/nginx/mime.types;
         default_type application/octet-stream;
 
