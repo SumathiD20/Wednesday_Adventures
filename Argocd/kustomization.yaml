@@ -7,3 +7,4 @@ resources:
   - namespaces.yaml
   - git-cred.yaml
   - nginx.yaml
+  - docker-secrets.yaml
