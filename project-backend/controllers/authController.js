@@ -71,7 +71,8 @@ async function LoginController(req, res) {
     });
     res.status(200).json({
       message: 'Login Successful',
-      email: email
+      email: email,
+      token: token
     });
 
   }

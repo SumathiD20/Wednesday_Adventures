@@ -25,8 +25,9 @@ function Login() {
             console.log("Response", response);
 
             // Store the email in Zustand store
-            useUserStore.getState().setEmail(values.email); 
-
+            useUserStore.getState().setEmail(values.email);
+            const token = response.data.token; 
+            localStorage.setItem("token", token);
             // Show success notification
             notification.success({
                 message: 'Login Successful',
@@ -59,10 +60,14 @@ function Login() {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            });
+            }).then(() => {const token = response.data.token; 
+                console.log("token", token)
+            localStorage.setItem("token", token)});
 
             // Store the email in Zustand store
-            useUserStore.getState().setEmail(values.email); 
+            useUserStore.getState().setEmail(values.email);
+            const token = response.data.token; 
+            localStorage.setItem("token", token);
 
             // Show success notification
             notification.success({
