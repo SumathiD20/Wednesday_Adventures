@@ -1,0 +1,23 @@
+# Stage 1: Build the backend
+FROM node:18.19.1 as backend-builder
+
+# Set the working directory for the backend
+WORKDIR /app/project-backend
+
+# Copy backend package.json and package-lock.json into the container
+COPY project-backend/package.json project-backend/package-lock.json ./
+
+# Install backend dependencies
+RUN npm install
+
+# Copy the rest of the backend code (from the ' project-backend ' directory)
+COPY project-backend/ .
+
+#env
+ENV FRONTEND_URL=https://www.wednesdayadventures.me
+
+# Expose the port the backend runs on
+EXPOSE 3000
+
+# Command to run the backend server
+CMD ["node", "index.js"]

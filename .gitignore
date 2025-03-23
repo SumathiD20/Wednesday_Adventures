@@ -20,7 +20,7 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
-#nodemodules
-Project-backend/node_modules
+node_modules/
+frontend/node_modules/
+project-backend/node_modules/
 
-aws-cred.txt 
