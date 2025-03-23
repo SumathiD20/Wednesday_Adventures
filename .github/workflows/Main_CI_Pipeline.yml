@@ -1,0 +1,200 @@
+name: Main_CI_Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - l00187927-WA-Jira18-CIPipeline
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build_docker_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build Backend Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest -f Dockerfile.backend .
+      - name: Build Frontend Docker Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest -f Dockerfile.frontend .
+      - name: Push Docker Images
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
+
+  sbom_scan:
+    runs-on: ubuntu-latest
+    needs: build_docker_image  # Runs after Docker build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
+          sudo mv ./bin/trivy /usr/local/bin/trivy
+      - name: Generate SBOM Report
+        run: trivy fs --format spdx-json -o sbom.json .
+      - name: Upload SBOM Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-report
+          path: sbom.json
+
+  snyk_security_scan:
+    runs-on: ubuntu-latest
+    needs: sbom_scan  # Runs after SBOM scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+      - name: Run Snyk Security Scan
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --all-projects --severity-threshold=high || echo "Snyk scan completed with issues"
+      - name: Monitor vulnerabilities in Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk monitor --all-projects || echo "Snyk monitor completed with issues"
+
+  owasp_zap_scan:
+    runs-on: ubuntu-latest
+    needs: snyk_security_scan  # Runs after Snyk scan
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18   
+
+      # Install dependencies for backend
+      - name: Install backend dependencies
+        run: |
+          cd project-backend
+          npm ci   
+      # Install dependencies for frontend
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci  
+      # Start backend
+      - name: Start the backend application
+        run: |
+          cd project-backend
+          npm start &
+        env:
+          PORT: 3000  
+
+      # Start frontend
+      - name: Start the frontend application
+        run: |
+          cd frontend
+          npm start &
+        env:
+          PORT: 3001  
+
+      # Wait for backend to start
+      - name: Wait for backend to start
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null; then
+              echo "Backend is up!"
+              exit 0
+            fi
+            echo "Waiting for backend to start..."
+            sleep 2
+          done
+          echo "Backend failed to start"
+          exit 1
+      # Wait for frontend to start
+      - name: Wait for frontend to start
+        run: |
+          for i in {1..30}; do
+            if curl -s http://localhost:3001 > /dev/null; then
+              echo "Frontend is up!"
+              exit 0
+            fi
+            echo "Waiting for frontend to start..."
+            sleep 2
+          done
+          echo "Frontend failed to start"
+          exit 1
+      - name: Fix permissions
+        run: sudo chmod -R 777 /home/runner/work/
+
+      # Run ZAP scan for backend
+      - name: Run ZAP Baseline Scan - Backend
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost:3000'  
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'  
+          cmd_options: '-T 120 -J zap_backend.json'  
+          fail_action: false  
+
+      # Run ZAP scan for frontend
+      - name: Run ZAP Baseline Scan - Frontend
+        uses: zaproxy/action-baseline@v0.7.0
+        with:
+          target: 'http://localhost:3001'  
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'  
+          cmd_options: '-T 120 -J zap_frontend.json'  
+          fail_action: false  
+
+      # Debug - List generated files
+      - name: Debug - List generated files
+        run: ls -la
+
+      # Upload Backend ZAP Report
+      - name: Upload ZAP Report - Backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-backend-report
+          path: |
+            zap_backend.json
+            report_json.json
+            report_md.md
+            report_html.html
+      # Upload Frontend ZAP Report
+      - name: Upload ZAP Report - Frontend
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-frontend-report
+          path: |
+            zap_frontend.json
+            report_json.json
+            report_md.md
+            report_html.html
+
+  sonarcloud_analysis:
+    runs-on: ubuntu-latest
+    needs: owasp_zap_scan  # Runs after ZAP scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Docker
+        run: |
+          sudo apt-get remove -y docker docker-engine docker.io containerd runc
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl gnupg lsb-release
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
+      - name: Run SonarCloud Analysis
+        run: |
+          docker run --rm \
+            -e SONAR_HOST_URL=https://sonarcloud.io \
+            -e SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} \
+            -v $(pwd):/usr/src \
+            sonarsource/sonar-scanner-cli:latest \
+            -Dsonar.projectKey=SumathiD20_Wednesday_Adventures \
+            -Dsonar.organization=sumathid20 \
+            -Dsonar.sources=project-backend,frontend \
+            -Dsonar.exclusions=**/node_modules/**,**/tests/** \
+            -Dsonar.sourceEncoding=UTF-8
+

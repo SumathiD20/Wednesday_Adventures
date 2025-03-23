@@ -1,0 +1,86 @@
+name: Snyk Security Scan and Docker
+
+on:
+  push:
+    branches:
+      - l00187927-WA-Jira18-CIPipeline
+      - main
+      - develop
+
+jobs:
+  build-test-security:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install backend dependencies
+      working-directory: ./project-backend
+      run: npm ci
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Install Snyk CLI
+      run: npm install -g snyk
+
+    - name: Validate Snyk API Token
+      run: |
+        if [ -z "${{ secrets.SNYK_TOKEN }}" ]; then
+          echo "ERROR: SNYK_TOKEN is not set or is empty!"
+          exit 1
+        fi
+
+    - name: Run Snyk Security Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk test --all-projects --severity-threshold=high || echo "Snyk scan completed with issues"
+
+    - name: Monitor vulnerabilities in Snyk
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk monitor --all-projects || echo "Snyk monitor completed with issues"
+
+    - name: Build Backend Docker Image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest -f Dockerfile.backend .
+
+    - name: Build Frontend Docker Image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest -f Dockerfile.frontend .
+
+    - name: Verify Docker Images
+      run: |
+        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend || exit 1
+        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend || exit 1
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Push Backend Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
+
+    - name: Push Frontend Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
+
+    - name: Verify Images on Docker Hub
+      run: |
+        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
+        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
+
+    - name: Snyk Container Scan for Backend
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
+
+    - name: Snyk Container Scan for Frontend
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
+
