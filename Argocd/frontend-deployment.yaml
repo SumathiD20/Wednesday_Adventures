@@ -20,6 +20,8 @@ spec:
           imagePullPolicy: Always  # Ensures Kubernetes always pulls the latest image
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: docker-hub-secret-prod
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
