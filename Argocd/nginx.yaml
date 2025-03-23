@@ -5,13 +5,58 @@ metadata:
   namespace: prod  # Replace with your namespace if needed
 data:
   nginx.conf: |
-    server {
-        listen 80;
-        server_name localhost;
+    # nginx.conf
 
-        root /usr/share/nginx/html;
-        index index.html;
+    # Main HTTP block
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
 
-        location / {
-            try_files $uri $uri/ /index.html;  # Redirect all routes to index.html
+        # Server block for the application
+        server {
+            listen 80;
+            server_name localhost;
+
+            # Define the root of your app
+            location / {
+                root /usr/share/nginx/html;
+                index index.html index.htm;
+            }
+
+            # Additional configurations for your paths
+            location /homepage {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /login {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /userRegister {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /forgotPassword {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /errorland {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /cart {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
+
+            location /about {
+                root /usr/share/nginx/html;
+                index index.html;
+            }
         }
+    }
