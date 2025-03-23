@@ -1,33 +1,32 @@
 # Stage 1: Build the frontend
 FROM node:18.19.1 as frontend-builder
 
-# Set the working directory for the frontend
+# Set working directory inside container
 WORKDIR /app
 
-# Copy frontend package.json and package-lock.json into the container
-COPY frontend/package.json frontend/package-lock.json ./frontend/
+# Copy package files first for better caching
+COPY package*.json ./
 
-# Install frontend dependencies
-WORKDIR /app/frontend
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the frontend code
-COPY frontend/ ./frontend/
+# Copy all frontend files (relative to frontend directory)
+COPY . .
 
-# Set environment variable for staging
-ENV REACT_APP_ENV_ENDPOINT=http://staging.wednesdaysadventures.me
+# Set environment variable
+ENV REACT_APP_ENV_ENDPOINT=https://wednesdayadventures.me
 
-# Build the frontend
+# Build the application
 RUN npm run build
 
-# Stage 2: Serve the frontend
+# Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy the built frontend files to Nginx's serving directory
-COPY --from=frontend-builder /app/frontend/build /usr/share/nginx/html
+# Copy build output
+COPY --from=frontend-builder /app/build /usr/share/nginx/html
 
-# Expose the default Nginx port
+# Copy Nginx config (ensure this file exists in frontend directory)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
-
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
