@@ -32,5 +32,8 @@
         "mongoose": "^8.9.5",
         "supertest": "^6.3.3"
     },
+    "directories": {
+        "doc": "docs"
+    },
     "description": ""
 }

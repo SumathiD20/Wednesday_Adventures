@@ -23,4 +23,7 @@ TestResults.xml
 node_modules/
 frontend/node_modules/
 project-backend/node_modules/
-
+Documentation/JSDoc/
+frontend/docs/
+project-backend/docs/
+project-backend/coverage/
