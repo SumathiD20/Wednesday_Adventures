@@ -28,6 +28,8 @@ spec:
         - name: nginx-config
           configMap:
             name: nginx-conf  # ConfigMap name that contains nginx.conf
+      imagePullSecrets:
+        - name: docker-hub-secret-prod
       nodeSelector:
          nodegroup-role: worker-staging
 

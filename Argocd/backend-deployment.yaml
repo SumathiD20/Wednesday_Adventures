@@ -25,6 +25,8 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secrets
+      imagePullSecrets:
+        - name: docker-hub-secret-prod
       nodeSelector:
          nodegroup-role: worker-staging
 
