@@ -32,23 +32,28 @@ jobs:
       working-directory: ./frontend
       run: npm ci
 
-    # Step 4: Ensure missing Babel and testing library plugins are installed
+    # Step 4: Run unit tests for backend controllers
+    - name: Run backend unit tests
+      working-directory: ./project-backend
+      run: npm test -- __tests__/controllers
+
+    # Step 5: Ensure missing Babel and testing library plugins are installed
     - name: Install required dependencies
       working-directory: ./frontend
       run: |
         npm install --save-dev @babel/plugin-transform-private-property-in-object
         npm install --save-dev @testing-library/jest-dom
 
-    # Step 5: Run Linter (will not fail the build on warnings)
+    # Step 6: Run Linter (will not fail the build on warnings)
     - name: Run Linter
       working-directory: ./frontend
       run: npm run lint || true
 
-    # Step 6: Fix vulnerabilities (only for non-breaking changes)
+    # Step 7: Fix vulnerabilities (only for non-breaking changes)
     - name: Run npm audit fix
       run: npm audit fix || true
 
-    # Step 7: Build frontend with CI=false to avoid failure on warnings
+    # Step 8: Build frontend with CI=false to avoid failure on warnings
     - name: Build frontend
       working-directory: ./frontend
       run: CI=false npm run build
