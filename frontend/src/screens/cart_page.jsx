@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker, Checkbox } from 'antd';
-import { Link } from 'react-router-dom';
+import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker, Checkbox, Spin } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import useCartStore from '../store/store_cart_items';
 import useBookingStore from '../store/store_booking';
 import { HomeOutlined, UserOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
 import logoImage from "../assets/waLogo.jpeg";
 import { loadStripe } from '@stripe/stripe-js';
+import useAuth from '../hooks/use_jwt_auth';
+import axios from 'axios';
 
 const stripePromise = loadStripe('pk_test_51QvPj5H0mEi2gjEIoypsFkdjuyAAbdqpInM77jN9kftEhsHkNje7mBvPByYXkFrd3M4oQWKgq9EpmF2cshE158rS00x3z5Jf45');
 
@@ -15,12 +17,16 @@ const { Item } = Form;
 const { TextArea } = Input;
 
 function CartPage() {
+    useAuth();
     const { cart, removeFromCart, clearCart, setCart } = useCartStore();
     const { setBookingDetails } = useBookingStore();
     const [form] = Form.useForm();
     const [showBookingForm, setShowBookingForm] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const navigate = useNavigate();
 
     // Show/hide form modal
     const showFormModal = () => setShowBookingForm(true);
@@ -291,9 +297,59 @@ function CartPage() {
         showFormModal();
     };
 
+    const handleLogout = async () => {
+        setIsLogoutModalVisible(true); // Show logout modal
+        setIsLoggingOut(true); // Start loading spinner
+
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/logout`);
+
+            if (response.status === 200 || response.status === 201) {
+                // Show success notification
+                notification.success({
+                    message: 'Logout Successful',
+                    description: 'You have been logged out successfully.',
+                    placement: 'topRight',
+                });
+
+                // Redirect to home page
+                navigate('/');
+            } else {
+                throw new Error('Logout failed');
+            }
+        } catch (error) {
+            // Show error notification
+            notification.error({
+                message: 'Logout Failed',
+                description: 'There was a problem logging out. Please try again.',
+                placement: 'topRight',
+            });
+        } finally {
+            setIsLoggingOut(false); 
+            setIsLogoutModalVisible(false); 
+        }
+    };
+
+    const LogoutModal = () => (
+        <Modal
+            title="Logging Out"
+            open={isLogoutModalVisible}
+            onCancel={() => setIsLogoutModalVisible(false)}
+            footer={null} 
+            closable={false} 
+            centered
+        >
+            <Flex justify="center" align="center" gap="middle">
+                <Spin size="large" /> 
+                <span>Logging you off...</span>
+            </Flex>
+        </Modal>
+    );
+
     return (
         <Layout>
             <BookingFormModal />
+            <LogoutModal />
             {/* Terms and Conditions Modal */}
             <Modal
                 title="Terms and Conditions"
@@ -357,11 +413,16 @@ function CartPage() {
                     <Link to="/userBookedRides">
                         <Button icon={<UserOutlined />}>My Rides</Button>
                     </Link>
-                    <Link to="/">
-                        <Button type="primary" style={{ backgroundColor: "red" }} icon={<LogoutOutlined />}>
-                            Logout
-                        </Button>
-                    </Link>
+                    <Button
+                        type="primary"
+                        style={{ backgroundColor: "red", marginTop: "15px" }}
+                        icon={<LogoutOutlined />}
+                        onClick={() => {
+                            handleLogout(); // Call the function
+                            localStorage.setItem("token", null); // Set token to null
+                        }}                    >
+                        Logout
+                    </Button>
                 </Flex>
             </Header>
 

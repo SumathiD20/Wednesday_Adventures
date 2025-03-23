@@ -16,6 +16,7 @@ import darkWood from "../assets/darkwood.jpeg"
 import waterSlide from "../assets/waterslide.jpeg"
 import useBookingStore from '../store/store_booking';
 import axios from 'axios';
+import useAuth from '../hooks/use_jwt_auth';
 
 const { Header, Content } = Layout;
 
@@ -63,16 +64,13 @@ const products = [
 ];
 
 function HomePage() {
+    useAuth();
     const addToCart = useCartStore((state) => state.addToCart);
     const cart = useCartStore((state) => state.cart);
     const clearCart = useCartStore((state) => state.clearCart);
     const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log("log in another useeffect", cart.length)
-    }, [])
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -271,8 +269,10 @@ function HomePage() {
                         type="primary"
                         style={{ backgroundColor: "red", marginTop: "15px" }}
                         icon={<LogoutOutlined />}
-                        onClick={handleLogout}
-                    >
+                        onClick={() => {
+                            handleLogout(); // Call the function
+                            localStorage.setItem("token", null); // Set token to null
+                          }}                    >
                         Logout
                     </Button>
                 </Flex>
