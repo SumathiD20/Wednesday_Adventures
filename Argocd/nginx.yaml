@@ -6,9 +6,12 @@ metadata:
 data:
   nginx.conf: |
     # nginx.conf
+
+    # The events block should be outside the HTTP block
     events {
-            worker_connections 1024;  # This is the default and can be adjusted if needed
-        }
+        worker_connections 1024;  # This is the default and can be adjusted if needed
+    }
+
     # Main HTTP block
     http {
         include /etc/nginx/mime.types;
