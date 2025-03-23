@@ -2,18 +2,17 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: prod
-  name: frontend-ingress
+  namespace: staging
+  name: frontend-ingress-staging
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:476114128026:certificate/d8153eb0-29fb-4bcd-8451-392bdad2b8d5
     nginx.ingress.kubernetes.io/rewrite-target: /index.html
 spec:
   rules:
-    - host: www.wednesdaysadventures.me
+    - host: staging.wednesdaysadventures.me
       http:
         paths:
           - path: /  # Root path
@@ -72,24 +71,20 @@ spec:
                 name: frontend
                 port:
                   number: 80
-  tls:
-    - hosts:
-        - www.wednesdaysadventures.me
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  namespace: prod
-  name: backend-ingress
+  namespace: staging
+  name: backend-ingress-staging
   annotations:
     kubernetes.io/ingress.class: alb  # Use the AWS Load Balancer Controller
     alb.ingress.kubernetes.io/scheme: internet-facing  # Internet-facing ALB
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'  # Listen on HTTPS
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-west-1:476114128026:certificate/d8153eb0-29fb-4bcd-8451-392bdad2b8d5  # SSL certificate ARN
 spec:
   rules:
-    - host: wednesdayadventures.me  # Backend domain
+    - host: api.wednesdayadventures.me  # Backend domain
       http:
         paths:
           - path: /  # Root path
@@ -106,6 +101,3 @@ spec:
                 name: backend
                 port:
                   number: 5000
-  tls:
-    - hosts:
-        - wednesdayadventures.me  # Backend domain

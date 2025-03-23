@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: prod
+  namespace: staging
 spec:
   replicas: 1
   selector:
@@ -26,14 +26,14 @@ spec:
             - secretRef:
                 name: backend-secrets
       nodeSelector:
-         nodegroup-role: worker-prod
+         nodegroup-role: worker-staging
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: prod
-  name: backend
+  namespace: staging
+  name: backend-staging
 spec:
   selector:
     app: backend  # Match the labels of your backend pods
