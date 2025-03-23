@@ -7,10 +7,11 @@ on:
       - main
 
 jobs:
-
   performance_test:
-
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Ensure the correct permission is granted to the bot for pushing
 
     steps:
 
@@ -71,8 +72,14 @@ jobs:
       - name: Move testplan.jmx to specific directory
         run: |
           mv testplan.jmx frontend/Jmeter_test_reports/
+          
+          # Set GitHub user info for committing
           git config --global user.email "L00187746@atu.ie"
           git config --global user.name "SumathiD20"
+          
+          # Add, commit and push changes
           git add frontend/Jmeter_test_reports/testplan.jmx
-          git commit -m "test plan"
-          git push origin WWA-Jmeter
+          git commit -m "Add JMeter test plan"
+          
+          # Push changes with the GITHUB_TOKEN
+          git push https://github-token:${{ secrets.GITHUB_TOKEN }}@github.com/SumathiD20/Wednesday_Adventures.git WWA-Jmeter
