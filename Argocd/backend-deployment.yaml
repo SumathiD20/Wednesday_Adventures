@@ -41,5 +41,5 @@ spec:
     - protocol: TCP
       port: 5000  # Port exposed by the Service
       targetPort: 5000
-      nodePort: 30003
+      nodePort: 30009
   type: NodePort  # Internal service (not exposed externally)

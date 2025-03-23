@@ -46,5 +46,5 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 80
-      nodePort: 30005  # You can change this to 80 if you're not exposing it externally
+      nodePort: 30012  # You can change this to 80 if you're not exposing it externally
   type: NodePort
