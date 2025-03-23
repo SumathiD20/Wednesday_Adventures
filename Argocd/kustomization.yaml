@@ -6,3 +6,4 @@ resources:
   - secrets.yaml
   - namespaces.yaml
   - git-cred.yaml
+  - nginx.yaml
