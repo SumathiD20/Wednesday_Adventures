@@ -66,7 +66,8 @@ function Login() {
 
             // Store the email in Zustand store
             useUserStore.getState().setEmail(values.email);
-            
+            const token = response.data.token; 
+            localStorage.setItem("token", token);
 
             // Show success notification
             notification.success({
