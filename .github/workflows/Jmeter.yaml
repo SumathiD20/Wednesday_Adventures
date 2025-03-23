@@ -44,7 +44,7 @@ jobs:
                   <collectionProp name=\"Arguments.arguments\">
                     <elementProp name=\"FRONTEND_DOMAIN\" elementType=\"Argument\">
                       <stringProp name=\"Argument.name\">FRONTEND_DOMAIN</stringProp>
-                      <stringProp name=\"Argument.value\">www.wednesdayadventures.me</stringProp>
+                      <stringProp name=\"Argument.value\">https://www.wednesdayadventures.me</stringProp>
                       <stringProp name=\"Argument.metadata\">=</stringProp>
                     </elementProp>
                   </collectionProp>
@@ -58,7 +58,7 @@ jobs:
                     <boolProp name=\"LoopController.continue_forever\">false</boolProp>
                     <stringProp name=\"LoopController.loops\">1</stringProp>
                   </elementProp>
-                  <stringProp name=\"ThreadGroup.num_threads\">10</stringProp>
+                  <stringProp name=\"ThreadGroup.num_threads\">100</stringProp>
                   <stringProp name=\"ThreadGroup.ramp_time\">1</stringProp>
                   <boolProp name=\"ThreadGroup.scheduler\">false</boolProp>
                   <stringProp name=\"ThreadGroup.duration\"></stringProp>
