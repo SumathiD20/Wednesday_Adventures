@@ -25,6 +25,19 @@ spec:
                 name: backend-config
             - secretRef:
                 name: backend-secrets
+          env:
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_TRACE_AGENT_PORT
+              value: "8126"
+            - name: DD_ENV
+              value: "staging"
+            - name: DD_SERVICE
+              value: "project-backend"
+            - name: DD_VERSION
+              value: "1.0.0"
       imagePullSecrets:
         - name: docker-hub-secret-prod
       nodeSelector:
