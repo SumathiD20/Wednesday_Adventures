@@ -73,12 +73,6 @@ jobs:
         run: |
           mv testplan.jmx frontend/Jmeter_test_reports/
           
-          # Set GitHub user info for committing
-          git config --global user.email "L00187746@atu.ie"
-          git config --global user.name "SumathiD20"
           
-          # Add, commit and push changes
-          git add frontend/Jmeter_test_reports/testplan.jmx
-          git commit -m "Add JMeter test plan"
           
         
