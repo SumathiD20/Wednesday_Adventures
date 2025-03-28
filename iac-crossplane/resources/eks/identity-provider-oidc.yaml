@@ -7,5 +7,5 @@ spec:
     clusterName: wednesday-adventures
     oidc:
       - clientId: sts.amazonaws.com
-        issuerUrl: https://oidc.eks.eu-west-1.amazonaws.com/id/99FE6F2CD136FC7DE638795800D7A900
+        issuerUrl: https://oidc.eks.eu-west-1.amazonaws.com/id/0CE75AF11CADBEFA29986A4F687EA552
     region: eu-west-1

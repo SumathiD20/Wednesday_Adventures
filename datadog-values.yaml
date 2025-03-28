@@ -1,0 +1,8 @@
+datadog:
+ apiKeyExistingSecret: datadog-secret
+ site: us5datadoghq.com
+ apm:
+   enabled: true
+ env: 
+   - name: DD_ENV
+     value: "production"
