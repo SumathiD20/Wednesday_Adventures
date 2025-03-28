@@ -17,13 +17,13 @@ RUN npm install dd-trace
 COPY project-backend/ .
  
 # Set environment variables for Datadog
-ENV FRONTEND_URL=https://www.wednesdayadventures.me
-ENV DD_SERVICE="project-backend"           # Name of your service in Datadog
-ENV DD_ENV="production"                     # Define the environment
-ENV DD_LOGS_INJECTION="true"                # Enable logs injection
-ENV DD_TRACE_DEBUG="false"                   # Debug mode off
-ENV DD_AGENT_HOST="datadog-agent"           # Name of the Datadog agent service in Kubernetes
-ENV DD_TRACE_STARTUP_LOGS="true"            # Enable startup logs for troubleshooting
+ENV FRONTEND_URL="https://www.wednesdayadventures.me"
+ENV DD_SERVICE="project-backend"
+ENV DD_ENV="production"
+ENV DD_LOGS_INJECTION="true"
+ENV DD_TRACE_DEBUG="false"
+ENV DD_AGENT_HOST="datadog-agent"
+ENV DD_TRACE_STARTUP_LOGS="true"
  
 # Expose the port the backend runs on
 EXPOSE 3000
