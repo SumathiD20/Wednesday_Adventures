@@ -27,9 +27,7 @@ spec:
                 name: backend-secrets
           env:
             - name: DD_AGENT_HOST
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+              value: "datadog-agent.default.svc.cluster.local"
             - name: DD_TRACE_AGENT_PORT
               value: "8126"
             - name: DD_ENV
