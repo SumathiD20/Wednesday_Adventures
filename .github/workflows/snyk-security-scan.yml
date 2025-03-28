@@ -50,37 +50,44 @@ jobs:
       run: snyk monitor --all-projects || echo "Snyk monitor completed with issues"
 
     - name: Build Backend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest -f Dockerfile.backend .
+      run: |
+        docker build \
+          --build-arg FRONTEND_URL=http://www.api.wednesdayadventures.me \
+          -t ${{ secrets.DOCKER_USERNAME }}/backend:staging \
+          -f Dockerfile.backend .
 
     - name: Build Frontend Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest -f Dockerfile.frontend .
+      run: |
+        docker build \
+          --build-arg REACT_APP_ENV_ENDPOINT=https://staging.wednesdayadventures.me \
+          -t ${{ secrets.DOCKER_USERNAME }}/frontend:staging \
+          -f Dockerfile.frontend .
 
     - name: Verify Docker Images
       run: |
-        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend || exit 1
-        docker images | grep ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend || exit 1
+        docker images | grep ${{ secrets.DOCKER_USERNAME }}/backend || exit 1
+        docker images | grep ${{ secrets.DOCKER_USERNAME }}/frontend || exit 1
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
     - name: Push Backend Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:staging
 
     - name: Push Frontend Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/frontend:staging
 
     - name: Verify Images on Docker Hub
       run: |
-        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest
-        docker pull ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest
+        docker pull ${{ secrets.DOCKER_USERNAME }}/backend:staging
+        docker pull ${{ secrets.DOCKER_USERNAME }}/frontend:staging
 
     - name: Snyk Container Scan for Backend
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-backend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/backend:staging --severity-threshold=high || echo "Snyk container scan completed with issues"
 
     - name: Snyk Container Scan for Frontend
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/wednesday-adventures-frontend:latest --severity-threshold=high || echo "Snyk container scan completed with issues"
-
+      run: snyk container test ${{ secrets.DOCKER_USERNAME }}/frontend:staging --severity-threshold=high || echo "Snyk container scan completed with issues"
