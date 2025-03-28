@@ -81,5 +81,4 @@ jobs:
           git add frontend/Jmeter_test_reports/testplan.jmx
           git commit -m "Add JMeter test plan"
           
-          # Push changes with the GITHUB_TOKEN
-          git push https://github-token:${{ secrets.GITHUB_TOKEN }}@github.com/SumathiD20/Wednesday_Adventures.git WWA-Jmeter
+        
