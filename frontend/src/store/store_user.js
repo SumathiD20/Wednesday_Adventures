@@ -6,8 +6,10 @@ const useUserStore = create(
     persist(
         (set) => ({
             email: null,
+            userType: null, // 'User' or 'Admin'
             setEmail: (email) => set({ email }),
-            clearEmail: () => set({ email: null }),
+            setUserType: (userType) => set({ userType }), // New action
+            clearUser: () => set({ email: null, userType: null }), // Clear both email and userType
         }),
         {
             name: 'user-store',

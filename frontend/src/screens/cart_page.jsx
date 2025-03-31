@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker, Checkbox, Spin } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Layout, List, Button, Card, Typography, Image, Flex, Empty, notification, Modal, Form, Input, InputNumber, DatePicker, Checkbox } from 'antd';
+import { Link } from 'react-router-dom';
 import useCartStore from '../store/store_cart_items';
 import useBookingStore from '../store/store_booking';
-import { HomeOutlined, UserOutlined, ShoppingCartOutlined, LogoutOutlined } from '@ant-design/icons';
+import { HomeOutlined, UserOutlined } from '@ant-design/icons';
 import logoImage from "../assets/waLogo.jpeg";
 import { loadStripe } from '@stripe/stripe-js';
 import useAuth from '../hooks/use_jwt_auth';
-import axios from 'axios';
+import moment from 'moment';
 
 const stripePromise = loadStripe('pk_test_51QvPj5H0mEi2gjEIoypsFkdjuyAAbdqpInM77jN9kftEhsHkNje7mBvPByYXkFrd3M4oQWKgq9EpmF2cshE158rS00x3z5Jf45');
 
@@ -24,9 +24,6 @@ function CartPage() {
     const [showBookingForm, setShowBookingForm] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const navigate = useNavigate();
 
     // Show/hide form modal
     const showFormModal = () => setShowBookingForm(true);
@@ -229,9 +226,23 @@ function CartPage() {
                 <Item
                     label="Contact Number"
                     name="contact"
-                    rules={[{ required: true, message: 'Please enter contact number' }]}
+                    rules={[
+                        { required: true, message: 'Please enter contact number' },
+                        {
+                            pattern: /^[0-9]+$/,
+                            message: 'Please enter numbers only'
+                        },
+                        {
+                            min: 10,
+                            message: 'Number must be at least 10 digits'
+                        }
+                    ]}
                 >
-                    <Input placeholder="+1 234 567 890" />
+                    <Input
+                        placeholder="1234567890"
+                        type="tel"
+                        maxLength={15}
+                    />
                 </Item>
 
                 <Item
@@ -247,7 +258,13 @@ function CartPage() {
                     name="date"
                     rules={[{ required: true, message: 'Please select date' }]}
                 >
-                    <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+                    <DatePicker
+                        format="YYYY-MM-DD"
+                        style={{ width: '100%' }}
+                        disabledDate={(current) => {
+                            return current && current < moment().endOf('day');
+                        }}
+                    />
                 </Item>
 
                 <Item
@@ -297,59 +314,9 @@ function CartPage() {
         showFormModal();
     };
 
-    const handleLogout = async () => {
-        setIsLogoutModalVisible(true); // Show logout modal
-        setIsLoggingOut(true); // Start loading spinner
-
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/logout`);
-
-            if (response.status === 200 || response.status === 201) {
-                // Show success notification
-                notification.success({
-                    message: 'Logout Successful',
-                    description: 'You have been logged out successfully.',
-                    placement: 'topRight',
-                });
-
-                // Redirect to home page
-                navigate('/');
-            } else {
-                throw new Error('Logout failed');
-            }
-        } catch (error) {
-            // Show error notification
-            notification.error({
-                message: 'Logout Failed',
-                description: 'There was a problem logging out. Please try again.',
-                placement: 'topRight',
-            });
-        } finally {
-            setIsLoggingOut(false); 
-            setIsLogoutModalVisible(false); 
-        }
-    };
-
-    const LogoutModal = () => (
-        <Modal
-            title="Logging Out"
-            open={isLogoutModalVisible}
-            onCancel={() => setIsLogoutModalVisible(false)}
-            footer={null} 
-            closable={false} 
-            centered
-        >
-            <Flex justify="center" align="center" gap="middle">
-                <Spin size="large" /> 
-                <span>Logging you off...</span>
-            </Flex>
-        </Modal>
-    );
-
     return (
         <Layout>
             <BookingFormModal />
-            <LogoutModal />
             {/* Terms and Conditions Modal */}
             <Modal
                 title="Terms and Conditions"
@@ -399,11 +366,6 @@ function CartPage() {
                 </div>
 
                 <Flex gap="middle">
-                    <Link to="/cart">
-                        <Button type="primary" icon={<ShoppingCartOutlined />}>
-                            Cart ({cart.length})
-                        </Button>
-                    </Link>
                     <Link to="/homepage">
                         <Button icon={<HomeOutlined />}>Home</Button>
                     </Link>
@@ -413,16 +375,6 @@ function CartPage() {
                     <Link to="/userBookedRides">
                         <Button icon={<UserOutlined />}>My Rides</Button>
                     </Link>
-                    <Button
-                        type="primary"
-                        style={{ backgroundColor: "red", marginTop: "15px" }}
-                        icon={<LogoutOutlined />}
-                        onClick={() => {
-                            handleLogout(); // Call the function
-                            localStorage.setItem("token", null); // Set token to null
-                        }}                    >
-                        Logout
-                    </Button>
                 </Flex>
             </Header>
 

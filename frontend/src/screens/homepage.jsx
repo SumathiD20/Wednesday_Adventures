@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Card, Row, Col, Button, Image, Flex, notification, Modal, Spin } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -17,6 +17,7 @@ import waterSlide from "../assets/waterslide.jpeg"
 import useBookingStore from '../store/store_booking';
 import axios from 'axios';
 import useAuth from '../hooks/use_jwt_auth';
+import useUserStore from '../store/store_user';
 
 const { Header, Content } = Layout;
 
@@ -71,6 +72,7 @@ function HomePage() {
     const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
     const navigate = useNavigate();
+    const userType = useUserStore.getState().userType;
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -78,7 +80,8 @@ function HomePage() {
         if (queryParams.get('fromStripe') === 'true') {
             const bookingDetails = JSON.parse(localStorage.getItem('bookingDetails'));
             const paymentId = localStorage.getItem('paymentId');
-            const cart = JSON.parse(localStorage.getItem('preservedCart') || []);
+            const cart = JSON.parse(localStorage.getItem('preservedCart') || '[]');
+            // Get userType from store
 
             if (!bookingDetails || !paymentId) {
                 notification.error({
@@ -99,12 +102,15 @@ function HomePage() {
                 key: 'processing-notification',
             });
 
-            console.log("Cart items length", cart.length)
-
             const processBooking = async () => {
                 try {
+                    // Determine endpoint based on userType
+                    const endpoint = userType === "Admin"
+                        ? `${process.env.REACT_APP_ENV_ENDPOINT}/admin/bookticket`
+                        : `${process.env.REACT_APP_ENV_ENDPOINT}/bookticket`
+
                     const bookingResponse = await axios.post(
-                        `${process.env.REACT_APP_ENV_ENDPOINT}/bookticket`,
+                        endpoint, // Use the conditional endpoint
                         {
                             userDetails: bookingDetails,
                             selectedAdventures: cart.reduce((acc, item) => {
@@ -137,7 +143,6 @@ function HomePage() {
                             `${process.env.REACT_APP_API_ENDPOINT}/initiate-refund`,
                             { paymentId }
                         );
-
                         notification.info({
                             message: 'Refund Initiated',
                             description: 'Your refund has been initiated. Please check your email for updates.',
@@ -206,8 +211,8 @@ function HomePage() {
                 placement: 'topRight',
             });
         } finally {
-            setIsLoggingOut(false); 
-            setIsLogoutModalVisible(false); 
+            setIsLoggingOut(false);
+            setIsLogoutModalVisible(false);
         }
     };
 
@@ -216,12 +221,12 @@ function HomePage() {
             title="Logging Out"
             open={isLogoutModalVisible}
             onCancel={() => setIsLogoutModalVisible(false)}
-            footer={null} 
-            closable={false} 
+            footer={null}
+            closable={false}
             centered
         >
             <Flex justify="center" align="center" gap="middle">
-                <Spin size="large" /> 
+                <Spin size="large" />
                 <span>Logging you off...</span>
             </Flex>
         </Modal>
@@ -262,8 +267,8 @@ function HomePage() {
                     <Link to="/about">
                         <Button icon={<UserOutlined />}>About</Button>
                     </Link>
-                    <Link to="/userBookedRides">
-                        <Button icon={<UserOutlined />}>My Rides</Button>
+                    <Link to={userType === "Admin" ? "/adminBookedList" : "/userBookedRides"}>
+                        {userType === "Admin" ? <Button>Manage Bookings</Button> : <Button >My Rides</Button>}
                     </Link>
                     <Button
                         type="primary"
@@ -272,7 +277,7 @@ function HomePage() {
                         onClick={() => {
                             handleLogout(); // Call the function
                             localStorage.setItem("token", null); // Set token to null
-                          }}                    >
+                        }}                    >
                         Logout
                     </Button>
                 </Flex>

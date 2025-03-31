@@ -26,8 +26,10 @@ function Login() {
 
             // Store the email in Zustand store
             useUserStore.getState().setEmail(values.email);
+            useUserStore.getState().setUserType("User"); 
             const token = response.data.token; 
             localStorage.setItem("token", token);
+
             // Show success notification
             notification.success({
                 message: 'Login Successful',
@@ -55,33 +57,34 @@ function Login() {
     const handleAdminLogin = async (values) => {
         console.log("values", values);
         setLoading(true);
-
+    
         try {
             const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/login`, {
                 email: values.email,
                 password: values.password,
-            }).then(() => {const token = response.data.token; 
-                console.log("token", token)
-            localStorage.setItem("token", token)});
-
+            });
+    
+            console.log("Response", response);
+    
             // Store the email in Zustand store
             useUserStore.getState().setEmail(values.email);
+            useUserStore.getState().setUserType("Admin");
             const token = response.data.token; 
             localStorage.setItem("token", token);
-
+            
             // Show success notification
             notification.success({
                 message: 'Login Successful',
                 description: response.data.message,
                 placement: 'topRight',
             });
-
+    
             // Redirect to Home page after successful login
             navigateToPage("/homepage");
-
+    
         } catch (error) {
             console.error(error);
-
+    
             // Show error notification
             notification.error({
                 message: 'Login Failed',

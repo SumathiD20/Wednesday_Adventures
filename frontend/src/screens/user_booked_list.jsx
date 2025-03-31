@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Card, Row, Col, Image, Typography, Flex, Button, Spin, notification, Modal } from 'antd';
+import { Layout, Card, Row, Col, Image, Typography, Flex, Button, Spin } from 'antd';
 import axios from 'axios';
 import useUserStore from '../store/store_user';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-    HomeOutlined,
-    LogoutOutlined
-} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import { HomeOutlined } from '@ant-design/icons';
 import darkWood from "../assets/darkwood.jpeg";
 import wheelRide from "../assets/wheelride.jpeg";
 import rollerCoaster from "../assets/rollercoaster.jpg";
@@ -21,10 +18,6 @@ function UserBookedList() {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const email = useUserStore((state) => state.email);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -60,58 +53,8 @@ function UserBookedList() {
         return match ? match[1] : 0;
     };
 
-    const handleLogout = async () => {
-        setIsLogoutModalVisible(true); // Show logout modal
-        setIsLoggingOut(true); // Start loading spinner
-
-        try {
-            const response = await axios.post(`${process.env.REACT_APP_ENV_ENDPOINT}/logout`);
-
-            if (response.status === 200 || response.status === 201) {
-                // Show success notification
-                notification.success({
-                    message: 'Logout Successful',
-                    description: 'You have been logged out successfully.',
-                    placement: 'topRight',
-                });
-
-                // Redirect to home page
-                navigate('/');
-            } else {
-                throw new Error('Logout failed');
-            }
-        } catch (error) {
-            // Show error notification
-            notification.error({
-                message: 'Logout Failed',
-                description: 'There was a problem logging out. Please try again.',
-                placement: 'topRight',
-            });
-        } finally {
-            setIsLoggingOut(false);
-            setIsLogoutModalVisible(false);
-        }
-    };
-
-    const LogoutModal = () => (
-        <Modal
-            title="Logging Out"
-            open={isLogoutModalVisible}
-            onCancel={() => setIsLogoutModalVisible(false)}
-            footer={null}
-            closable={false}
-            centered
-        >
-            <Flex justify="center" align="center" gap="middle">
-                <Spin size="large" />
-                <span>Logging you off...</span>
-            </Flex>
-        </Modal>
-    );
-
     return (
         <Layout>
-            <LogoutModal />
             <Header
                 style={{
                     display: 'flex',
@@ -130,16 +73,6 @@ function UserBookedList() {
                     <Link to="/homepage">
                         <Button icon={<HomeOutlined />}>Home</Button>
                     </Link>
-                    <Button
-                        type="primary"
-                        style={{ backgroundColor: "red", marginTop: "15px" }}
-                        icon={<LogoutOutlined />}
-                        onClick={() => {
-                            handleLogout(); // Call the function
-                            localStorage.setItem("token", null); // Set token to null
-                        }}                    >
-                        Logout
-                    </Button>
                 </Flex>
             </Header>
 
