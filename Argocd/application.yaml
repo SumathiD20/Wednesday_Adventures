@@ -13,7 +13,7 @@ metadata:
     argocd-image-updater.argoproj.io/frontend.credentials: secret:argocd/docker-hub-secret-prod
     argocd-image-updater.argoproj.io/backend.credentials: secret:argocd/docker-hub-secret-prod
   name: wednesday-adventures-staging
-  namespace: argocd-staging
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
