@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Authenticate = require('../middleware/authenticate');
 const { AdminSignupController, AdminLoginController, AdminLogoutController, AdminForgotController } = require('../controllers/adminAuthController');
-// const { AdminBookTicketController, AdminBookingsController, AdminEditTicketController, AdminDeleteBookingController } = require('../controllers/adminBookingController');
+const { AdminBookTicketController, AdminBookingsController, AdminEditTicketController, AdminDeleteBookingController } = require('../controllers/adminBookingController');
 require('../db/connection');
 const adminMail = process.env.ADMIN_MAIL;
 
