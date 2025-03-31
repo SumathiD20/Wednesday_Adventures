@@ -29,7 +29,7 @@ jobs:
 
   sbom_scan:
     runs-on: ubuntu-latest
-    needs: build_docker_image  # Runs after Docker build
+    needs: build_docker_image
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
 
   snyk_security_scan:
     runs-on: ubuntu-latest
-    needs: sbom_scan  # Runs after SBOM scan
+    needs: sbom_scan
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -64,7 +64,7 @@ jobs:
 
   owasp_zap_scan:
     runs-on: ubuntu-latest
-    needs: snyk_security_scan  # Runs after Snyk scan
+    needs: snyk_security_scan
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -72,60 +72,83 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18   
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: |
+            project-backend/package-lock.json
+            frontend/package-lock.json
 
       # Install dependencies for backend
       - name: Install backend dependencies
         run: |
           cd project-backend
-          npm ci   
+          npm install
+          npm list dd-trace || echo "dd-trace not found (optional dependency?)"
+          
       # Install dependencies for frontend
       - name: Install frontend dependencies
         run: |
           cd frontend
-          npm ci  
-      # Start backend
+          npm install
+
+      # Start backend with logging
       - name: Start the backend application
         run: |
           cd project-backend
-          npm start &
+          nohup npm start > backend.log 2>&1 &
+          echo $! > backend.pid
+          sleep 5
+          cat backend.log
         env:
-          PORT: 3000  
+          PORT: 3000
+          NODE_ENV: development
 
-      # Start frontend
+      # Start frontend with logging
       - name: Start the frontend application
         run: |
           cd frontend
-          npm start &
+          nohup npm start > frontend.log 2>&1 &
+          echo $! > frontend.pid
+          sleep 5
+          cat frontend.log
         env:
-          PORT: 3001  
+          PORT: 3001
+          NODE_ENV: development
 
-      # Wait for backend to start
+      # Wait for backend to start with improved checks
       - name: Wait for backend to start
         run: |
           for i in {1..30}; do
             if curl -s http://localhost:3000 > /dev/null; then
               echo "Backend is up!"
+              curl -v http://localhost:3000
               exit 0
             fi
             echo "Waiting for backend to start..."
+            ps aux | grep node || echo "No node processes found"
+            cat project-backend/backend.log || echo "No backend log found"
             sleep 2
           done
           echo "Backend failed to start"
           exit 1
-      # Wait for frontend to start
+
+      # Wait for frontend to start with improved checks
       - name: Wait for frontend to start
         run: |
           for i in {1..30}; do
             if curl -s http://localhost:3001 > /dev/null; then
               echo "Frontend is up!"
+              curl -v http://localhost:3001
               exit 0
             fi
             echo "Waiting for frontend to start..."
+            ps aux | grep node || echo "No node processes found"
+            cat frontend/frontend.log || echo "No frontend log found"
             sleep 2
           done
           echo "Frontend failed to start"
           exit 1
+
       - name: Fix permissions
         run: sudo chmod -R 777 /home/runner/work/
 
@@ -133,23 +156,19 @@ jobs:
       - name: Run ZAP Baseline Scan - Backend
         uses: zaproxy/action-baseline@v0.7.0
         with:
-          target: 'http://localhost:3000'  
-          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'  
-          cmd_options: '-T 120 -J zap_backend.json'  
-          fail_action: false  
+          target: 'http://localhost:3000'
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
+          cmd_options: '-T 120 -J zap_backend.json'
+          fail_action: false
 
       # Run ZAP scan for frontend
       - name: Run ZAP Baseline Scan - Frontend
         uses: zaproxy/action-baseline@v0.7.0
         with:
-          target: 'http://localhost:3001'  
-          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'  
-          cmd_options: '-T 120 -J zap_frontend.json'  
-          fail_action: false  
-
-      # Debug - List generated files
-      - name: Debug - List generated files
-        run: ls -la
+          target: 'http://localhost:3001'
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
+          cmd_options: '-T 120 -J zap_frontend.json'
+          fail_action: false
 
       # Upload Backend ZAP Report
       - name: Upload ZAP Report - Backend
@@ -161,6 +180,7 @@ jobs:
             report_json.json
             report_md.md
             report_html.html
+
       # Upload Frontend ZAP Report
       - name: Upload ZAP Report - Frontend
         uses: actions/upload-artifact@v4
@@ -172,19 +192,28 @@ jobs:
             report_md.md
             report_html.html
 
+      # Cleanup processes
+      - name: Stop backend and frontend
+        if: always()
+        run: |
+          kill $(cat project-backend/backend.pid) 2>/dev/null || echo "Backend not running"
+          kill $(cat frontend/frontend.pid) 2>/dev/null || echo "Frontend not running"
+
   sonarcloud_analysis:
     runs-on: ubuntu-latest
-    needs: owasp_zap_scan  # Runs after ZAP scan
+    needs: owasp_zap_scan
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install Docker
         run: |
-          sudo apt-get remove -y docker docker-engine docker.io containerd runc
           sudo apt-get update
           sudo apt-get install -y ca-certificates curl gnupg lsb-release
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
       - name: Run SonarCloud Analysis
         run: |
           docker run --rm \
@@ -197,4 +226,3 @@ jobs:
             -Dsonar.sources=project-backend,frontend \
             -Dsonar.exclusions=**/node_modules/**,**/tests/** \
             -Dsonar.sourceEncoding=UTF-8
-
