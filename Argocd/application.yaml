@@ -21,7 +21,6 @@ spec:
   source:
     repoURL: https://github.com/SumathiD20/Wednesday_Adventures.git
     targetRevision: staging
-    kustomize: {} 
     path: Argocd
   syncPolicy:
     automated:
