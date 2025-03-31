@@ -118,21 +118,35 @@ async function AdminEditTicketController(req, res) {
 }
 
 async function AdminDeleteBookingController(req, res) {
-    const { booking } = req.body;
-
     try {
-        const bookingpre = await Booking.findOne({ bookingnumber: booking.bookingnumber });
-        bookingpre.adventures[booking.park] = bookingpre.adventures[booking.park].filter((a) => a !== booking.adventure);
+        const { bookingnumber } = req.body;
+        
+        if (!bookingnumber) {
+            return res.status(400).json({ 
+                message: "Booking number is required" 
+            });
+        }
 
-        await bookingpre.save();
+        // Delete the entire booking document
+        const result = await Booking.findOneAndDelete({ bookingnumber });
 
-        res.status(200).json({ message: "Booking Delete Successful" });
+        if (!result) {
+            return res.status(404).json({ 
+                message: 'Booking not found' 
+            });
+        }
+
+        res.status(200).json({ 
+            message: "Booking deleted successfully",
+            deletedBooking: bookingnumber
+        });
+    } catch (err) {
+        console.error('Delete booking error:', err);
+        res.status(500).json({ 
+            message: 'Failed to delete booking',
+            error: err.message 
+        });
     }
-    catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal Server Error' });
-    }
-
 }
 
 module.exports = { AdminBookTicketController, AdminBookingsController, AdminEditTicketController, AdminDeleteBookingController }
