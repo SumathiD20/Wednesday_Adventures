@@ -70,6 +70,13 @@ spec:
                 name: frontend-staging
                 port:
                   number: 80
+          - path: /adminBookedList  # Error land path
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
 
 ---
 apiVersion: networking.k8s.io/v1
