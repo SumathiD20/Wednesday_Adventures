@@ -3,13 +3,15 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   annotations:
-    argocd-image-updater.argoproj.io/image-list: frontend=l00187746/frontend,backend=l00187746/backend
+    argocd-image-updater.argoproj.io/image-list: frontend=l00187746/frontend:staging,backend=l00187746/backend:staging
     argocd-image-updater.argoproj.io/frontend.update-strategy: latest
     argocd-image-updater.argoproj.io/backend.update-strategy: latest
-    argocd-image-updater.argoproj.io/frontend.tag-match: '^staging$'  # Explicitly match staging tag
-    argocd-image-updater.argoproj.io/backend.tag-match: '^staging$'   # Explicitly match staging tag
-    argocd-image-updater.argoproj.io/frontend.allow-tags: regexp:^staging$  # Only allow staging tag
-    argocd-image-updater.argoproj.io/backend.allow-tags: regexp:^staging$   # Only allow staging tag
+    argocd-image-updater.argoproj.io/frontend.write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/backend.write-back-method: git:secret:argocd/git-creds
+    argocd-image-updater.argoproj.io/git-branch: staging
+    argocd-image-updater.argoproj.io/git-path: Argocd
+    argocd-image-updater.argoproj.io/frontend.credentials: secret:argocd/docker-hub-secret-prod
+    argocd-image-updater.argoproj.io/backend.credentials: secret:argocd/docker-hub-secret-prod
   name: wednesday-adventures-staging
   namespace: argocd-staging
   finalizers:
